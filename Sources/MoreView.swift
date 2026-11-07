@@ -19,6 +19,37 @@ struct MoreView: View {
                     Text("Used for the 4:00 daily reset and which domains are open today.")
                 }
 
+                Section {
+                    LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 12), count: 5), spacing: 12) {
+                        ForEach(Theme.accents, id: \.id) { option in
+                            Button {
+                                store.data.accent = option.id
+                            } label: {
+                                ZStack {
+                                    Circle().fill(option.color).frame(width: 40, height: 40)
+                                    if store.data.accent == option.id {
+                                        Image(systemName: "checkmark")
+                                            .font(.headline.weight(.bold))
+                                            .foregroundColor(.white)
+                                    }
+                                }
+                                .overlay(Circle().stroke(Color.primary.opacity(store.data.accent == option.id ? 0.6 : 0), lineWidth: 2).padding(-3))
+                            }
+                            .buttonStyle(.plain)
+                            .accessibilityLabel(option.name)
+                        }
+                    }
+                    .padding(.vertical, 6)
+                    Picker("Appearance", selection: $store.data.appearance) {
+                        ForEach(Theme.appearances, id: \.id) { a in Text(a.name).tag(a.id) }
+                    }
+                    .pickerStyle(.segmented)
+                } header: {
+                    Text("Theme colour")
+                } footer: {
+                    Text("Currently: \(Theme.accents.first(where: { $0.id == store.data.accent })?.name ?? "Primogem Gold"). Changes buttons, toggles, progress bars and tab icons.")
+                }
+
                 Section("Tools") {
                     NavigationLink { WishView() } label: { Label("Wish savings & pity", systemImage: "sparkles") }
                     NavigationLink { TaskManagerView() } label: { Label("Edit checklist tasks", systemImage: "list.bullet") }

@@ -235,7 +235,7 @@ struct CharacterDetailView: View {
 
             Section {
                 NavigationLink("Plan materials for \(character.name)") {
-                    TemplateView(preselected: character.id)
+                    PlanEditorView(characterID: character.id)
                 }
             }
 

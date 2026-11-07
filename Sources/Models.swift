@@ -160,6 +160,8 @@ struct MaterialGoal: Codable, Identifiable, Hashable {
     var note: String = ""
     /// Remembers the count from before a double-tap "mark complete", so a second double-tap can undo it.
     var previousHave: Int? = nil
+    /// Set on items created/updated by a character plan. Optional so older saves still decode.
+    var fromPlan: Bool? = nil
 
     var remaining: Int { max(0, need - have) }
     var progress: Double { need <= 0 ? 1 : min(1, Double(have) / Double(need)) }
@@ -208,11 +210,14 @@ struct AppData: Codable {
     var bookOrder: [String] = []
     var groupOrder: [String] = []
     var collapsedGroups: [String] = []
+    var plans: [String: CharacterPlan] = [:]
+    var accent: String = "gold"
+    var appearance: String = "system"
 
     init() {}
 
     enum CodingKeys: String, CodingKey {
-        case server, characters, goals, tasks, customBooks, wish, lastDailyKey, lastWeeklyKey, bookOrder, groupOrder, collapsedGroups
+        case server, characters, goals, tasks, customBooks, wish, lastDailyKey, lastWeeklyKey, bookOrder, groupOrder, collapsedGroups, plans, accent, appearance
     }
 
     init(from decoder: Decoder) throws {
@@ -228,6 +233,9 @@ struct AppData: Codable {
         bookOrder = try c.decodeIfPresent([String].self, forKey: .bookOrder) ?? []
         groupOrder = try c.decodeIfPresent([String].self, forKey: .groupOrder) ?? []
         collapsedGroups = try c.decodeIfPresent([String].self, forKey: .collapsedGroups) ?? []
+        plans = (try? c.decodeIfPresent([String: CharacterPlan].self, forKey: .plans)) ?? [:]
+        accent = try c.decodeIfPresent(String.self, forKey: .accent) ?? "gold"
+        appearance = try c.decodeIfPresent(String.self, forKey: .appearance) ?? "system"
     }
 
     static let defaultTasks: [TaskItem] = [

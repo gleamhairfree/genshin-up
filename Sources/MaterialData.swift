@@ -126,6 +126,7 @@ enum MaterialData {
     Yun Jin|Prithiva Topaz Sliver:1;Glaze Lily:168;Damaged Mask:18;Prithiva Topaz Fragment:9;Riftborn Regalia:46;Stained Mask:30;Prithiva Topaz Chunk:9;Ominous Mask:36;Prithiva Topaz Gemstone:6|Damaged Mask;Stained Mask;Ominous Mask|Ashen Heart
     Zhongli|Prithiva Topaz Sliver:1;Cor Lapis:168;Slime Condensate:18;Prithiva Topaz Fragment:9;Basalt Pillar:46;Slime Secretions:30;Prithiva Topaz Chunk:9;Slime Concentrate:36;Prithiva Topaz Gemstone:6|Slime Condensate;Slime Secretions;Slime Concentrate|Tusk of Monoceros Caeli
     Zibai|Prithiva Topaz Sliver:1;Glaze Lily:168;Tattered Warrant:18;Prithiva Topaz Fragment:9;Remnant of the Dreadwing:46;Immaculate Warrant:30;Prithiva Topaz Chunk:9;Frost-Etched Warrant:36;Prithiva Topaz Gemstone:6|Tattered Warrant;Immaculate Warrant;Frost-Etched Warrant|Ascended Sample: Queen
+    Traveler|Brilliant Diamond Sliver:1;Windwheel Aster:168;Damaged Mask:18;Brilliant Diamond Fragment:9;Stained Mask:30;Brilliant Diamond Chunk:9;Ominous Mask:36;Brilliant Diamond Gemstone:6||
     """
 
     /// Display name|paimon.moe item id
