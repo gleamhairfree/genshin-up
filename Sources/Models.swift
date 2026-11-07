@@ -1,5 +1,4 @@
 import SwiftUI
-import UserNotifications
 
 // MARK: - Server / reset logic
 
@@ -186,25 +185,6 @@ struct TaskItem: Codable, Identifiable, Hashable {
     var done: Bool = false
 }
 
-struct ResinState: Codable, Hashable {
-    var value: Int = 0
-    var recordedAt: Date = Date()
-    var cap: Int = 200
-    var notify: Bool = false
-
-    static let secondsPerResin: Double = 480
-
-    func current(at now: Date = Date()) -> Int {
-        let gained = Int(max(0, now.timeIntervalSince(recordedAt)) / Self.secondsPerResin)
-        return min(cap, max(value, 0) + gained)
-    }
-
-    func fullDate() -> Date? {
-        if value >= cap { return nil }
-        return recordedAt.addingTimeInterval(Double(cap - value) * Self.secondsPerResin)
-    }
-}
-
 struct WishState: Codable, Hashable {
     var primogems: Int = 0
     var fates: Int = 0
@@ -222,15 +202,17 @@ struct AppData: Codable {
     var goals: [MaterialGoal] = []
     var tasks: [TaskItem] = AppData.defaultTasks
     var customBooks: [TalentBook] = []
-    var resin = ResinState()
     var wish = WishState()
     var lastDailyKey: String = ""
     var lastWeeklyKey: String = ""
+    var bookOrder: [String] = []
+    var groupOrder: [String] = []
+    var collapsedGroups: [String] = []
 
     init() {}
 
     enum CodingKeys: String, CodingKey {
-        case server, characters, goals, tasks, customBooks, resin, wish, lastDailyKey, lastWeeklyKey
+        case server, characters, goals, tasks, customBooks, wish, lastDailyKey, lastWeeklyKey, bookOrder, groupOrder, collapsedGroups
     }
 
     init(from decoder: Decoder) throws {
@@ -240,10 +222,12 @@ struct AppData: Codable {
         goals = try c.decodeIfPresent([MaterialGoal].self, forKey: .goals) ?? []
         tasks = try c.decodeIfPresent([TaskItem].self, forKey: .tasks) ?? AppData.defaultTasks
         customBooks = try c.decodeIfPresent([TalentBook].self, forKey: .customBooks) ?? []
-        resin = try c.decodeIfPresent(ResinState.self, forKey: .resin) ?? ResinState()
         wish = try c.decodeIfPresent(WishState.self, forKey: .wish) ?? WishState()
         lastDailyKey = try c.decodeIfPresent(String.self, forKey: .lastDailyKey) ?? ""
         lastWeeklyKey = try c.decodeIfPresent(String.self, forKey: .lastWeeklyKey) ?? ""
+        bookOrder = try c.decodeIfPresent([String].self, forKey: .bookOrder) ?? []
+        groupOrder = try c.decodeIfPresent([String].self, forKey: .groupOrder) ?? []
+        collapsedGroups = try c.decodeIfPresent([String].self, forKey: .collapsedGroups) ?? []
     }
 
     static let defaultTasks: [TaskItem] = [
@@ -281,6 +265,7 @@ final class Store: ObservableObject {
             loaded = decoded
         }
         Store.mergePresets(into: &loaded)
+        Store.upgradeGenericGoals(in: &loaded)
         data = loaded
         refreshResets()
     }
@@ -440,6 +425,7 @@ final class Store: ObservableObject {
         guard let raw = text.data(using: .utf8),
               var decoded = try? Store.decoder.decode(AppData.self, from: raw) else { return false }
         Store.mergePresets(into: &decoded)
+        Store.upgradeGenericGoals(in: &decoded)
         data = decoded
         return true
     }
@@ -447,23 +433,5 @@ final class Store: ObservableObject {
     func resetAll() {
         data = AppData()
         refreshResets()
-    }
-
-    // MARK: Resin notifications
-
-    func scheduleResinNotification() {
-        let center = UNUserNotificationCenter.current()
-        center.removePendingNotificationRequests(withIdentifiers: ["resin-full"])
-        guard data.resin.notify, let full = data.resin.fullDate(), full > Date() else { return }
-        center.requestAuthorization(options: [.alert, .sound]) { granted, _ in
-            guard granted else { return }
-            let content = UNMutableNotificationContent()
-            content.title = "Original Resin is full"
-            content.body = "Your resin has reached \(self.data.resin.cap). Time to spend it!"
-            content.sound = .default
-            let interval = max(5, full.timeIntervalSinceNow)
-            let trigger = UNTimeIntervalNotificationTrigger(timeInterval: interval, repeats: false)
-            center.add(UNNotificationRequest(identifier: "resin-full", content: content, trigger: trigger))
-        }
     }
 }

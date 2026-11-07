@@ -3,9 +3,9 @@
 A small SwiftUI iOS app (iOS 16+) that stores everything locally on your phone.
 
 ## Features
-- **Today** – server day & countdown to the 4:00 reset, Original Resin tracker (with optional "resin full" notification), which of *your* characters can farm talent books today, and daily / weekly / one-off checklists that reset themselves.
+- **Today** – server day & countdown to the 4:00 reset, a compact wish-savings card, which of *your* characters can farm talent books today, and daily / weekly / one-off checklists that reset themselves. Tap Reorder to drag domains and tasks into your preferred order.
 - **Roster** – all 122 characters through 7.x with icons, owned toggle, typed-in level, constellation, friendship, talent levels, a "currently building" flag, notes and KQM Quick Guide / Infographic links. Filter by owned / element, search, and add new characters yourself.
-- **Materials** – "have / need / X more to go" trackers with item icons and +/- buttons, grouped by character. Double-tap an item's name to mark it collected. A template fills in the exact shopping list for a character's ascension (1→90) and talents (1→10): gems, boss drop, local specialty, common drops, books, weekly boss and crowns.
+- **Materials** – "have / need / X more to go" trackers with item icons and +/- buttons, grouped by character (tap a character to collapse/expand, reorder characters from the menu). Double-tap an item's name to mark it collected. A template fills in the exact shopping list for a character's ascension (1→90) and talents (1→10): gems, boss drop, local specialty, common drops, books, weekly boss and crowns.
 - **Domains** – pick any weekday to see every talent-book and weapon-material domain that's open, and which characters use each book.
 - **More** – server selection, wish savings & pity calculator, edit checklist tasks, add custom talent books (for new regions), and JSON backup/restore.
 

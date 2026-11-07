@@ -1,16 +1,11 @@
-import SwiftUI
-
 struct MaterialsView: View {
     @EnvironmentObject var store: Store
     @State private var showCompleted = true
     @State private var showAdd = false
+    @State private var showReorder = false
     @State private var editing: MaterialGoal?
 
-    private var groups: [String] {
-        var seen: [String] = []
-        for g in store.data.goals where !seen.contains(g.group) { seen.append(g.group) }
-        return seen
-    }
+    private var groups: [String] { store.orderedGroups() }
 
     var body: some View {
         NavigationStack {
@@ -31,16 +26,21 @@ struct MaterialsView: View {
                         let done = store.data.goals.filter { $0.isDone }.count
                         ProgressRow(title: "Goals complete", done: done, total: total)
                         Toggle("Show completed", isOn: $showCompleted)
-                        Text("Tip: double-tap an item's name to mark it collected (double-tap again to undo). Tap once to edit.")
+                        Text("Tip: tap a character's name to collapse it. Double-tap an item's name to mark it collected (again to undo); tap once to edit.")
                             .font(.caption).foregroundColor(.secondary)
                         NavigationLink("Use a character template") { TemplateView(preselected: nil) }
                     }
                 }
 
                 ForEach(groups, id: \.self) { group in
-                    let items = store.data.goals.filter { $0.group == group && (showCompleted || !$0.isDone) }
-                    if !items.isEmpty {
-                        Section {
+                    let all = store.data.goals.filter { $0.group == group }
+                    let items = all.filter { showCompleted || !$0.isDone }
+                    let collapsed = store.isCollapsed(group)
+                    Section {
+                        if !collapsed {
+                            if items.isEmpty {
+                                Text("All collected! 🎉").font(.subheadline).foregroundColor(.secondary)
+                            }
                             ForEach(items) { goal in
                                 GoalRow(goal: goal) { editing = goal }
                                     .swipeActions {
@@ -49,29 +49,30 @@ struct MaterialsView: View {
                                         } label: { Label("Delete", systemImage: "trash") }
                                     }
                             }
-                        } header: {
-                            HStack {
-                                Text(group.isEmpty ? "General" : group)
-                                Spacer()
-                                Menu {
-                                    Button("Mark all collected") {
-                                        for i in store.data.goals.indices where store.data.goals[i].group == group {
-                                            store.data.goals[i].have = store.data.goals[i].need
-                                        }
-                                    }
-                                    Button("Delete group", role: .destructive) {
-                                        store.data.goals.removeAll { $0.group == group }
-                                    }
-                                } label: {
-                                    Image(systemName: "ellipsis.circle")
-                                }
-                            }
                         }
+                    } header: {
+                        GroupHeader(group: group, goals: all, collapsed: collapsed)
                     }
                 }
             }
             .navigationTitle("Materials")
             .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Menu {
+                        Button { showReorder = true } label: {
+                            Label("Reorder characters", systemImage: "arrow.up.arrow.down")
+                        }
+                        Button { withAnimation { store.setAllCollapsed(true) } } label: {
+                            Label("Collapse all", systemImage: "rectangle.compress.vertical")
+                        }
+                        Button { withAnimation { store.setAllCollapsed(false) } } label: {
+                            Label("Expand all", systemImage: "rectangle.expand.vertical")
+                        }
+                    } label: {
+                        Image(systemName: "line.3.horizontal.decrease.circle")
+                    }
+                    .disabled(store.data.goals.isEmpty)
+                }
                 ToolbarItem(placement: .primaryAction) {
                     Button { showAdd = true } label: { Image(systemName: "plus") }
                 }
@@ -81,6 +82,91 @@ struct MaterialsView: View {
             }
             .sheet(item: $editing) { goal in
                 GoalEditor(goal: goal, isNew: false)
+            }
+            .sheet(isPresented: $showReorder) { GroupReorderView() }
+        }
+    }
+}
+
+struct GroupHeader: View {
+    @EnvironmentObject var store: Store
+    let group: String
+    let goals: [MaterialGoal]
+    let collapsed: Bool
+
+    private var character: CharacterEntry? {
+        store.data.characters.first(where: { $0.name == group })
+    }
+
+    var body: some View {
+        HStack(spacing: 8) {
+            Button {
+                withAnimation(.easeInOut(duration: 0.2)) { store.toggleCollapsed(group) }
+            } label: {
+                HStack(spacing: 8) {
+                    Image(systemName: "chevron.right")
+                        .font(.caption.weight(.bold))
+                        .rotationEffect(.degrees(collapsed ? 0 : 90))
+                    if let c = character {
+                        CharacterIcon(character: c, size: 26)
+                    }
+                    Text(group.isEmpty ? "General" : group)
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundColor(.primary)
+                    let done = goals.filter { $0.isDone }.count
+                    Text("\(done)/\(goals.count)")
+                        .font(.caption.monospacedDigit())
+                        .foregroundColor(done == goals.count ? .green : .secondary)
+                    Spacer()
+                }
+                .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            Menu {
+                Button("Mark all collected") {
+                    for i in store.data.goals.indices where store.data.goals[i].group == group {
+                        store.data.goals[i].have = store.data.goals[i].need
+                    }
+                }
+                Button("Delete group", role: .destructive) {
+                    store.data.goals.removeAll { $0.group == group }
+                }
+            } label: {
+                Image(systemName: "ellipsis.circle")
+            }
+        }
+        .textCase(nil)
+    }
+}
+
+struct GroupReorderView: View {
+    @EnvironmentObject var store: Store
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        NavigationStack {
+            List {
+                Section {
+                    ForEach(store.orderedGroups(), id: \.self) { group in
+                        HStack(spacing: 10) {
+                            if let c = store.data.characters.first(where: { $0.name == group }) {
+                                CharacterIcon(character: c, size: 32)
+                            } else {
+                                Image(systemName: "shippingbox").frame(width: 32)
+                            }
+                            Text(group.isEmpty ? "General" : group)
+                        }
+                    }
+                    .onMove { from, to in store.moveGroups(from: from, to: to) }
+                } footer: {
+                    Text("Drag the handles to change the order on the Materials tab.")
+                }
+            }
+            .environment(\.editMode, .constant(.active))
+            .navigationTitle("Reorder characters")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .confirmationAction) { Button("Done") { dismiss() } }
             }
         }
     }
