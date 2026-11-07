@@ -70,6 +70,37 @@ extension Store {
     }
 }
 
+// MARK: - Tidying item order
+
+extension Store {
+    /// Sorts each character's items by type (gems, boss, specialty, common drops, books, ...).
+    /// Items added by hand keep their relative order after the planned ones.
+    static func sortGoalsByType(in data: inout AppData) {
+        let books = GameData.books + data.customBooks
+        let byName = Dictionary(data.characters.map { ($0.name, $0) }, uniquingKeysWith: { a, _ in a })
+        var orders: [String: [String]] = [:]
+        for g in data.goals where orders[g.group] == nil {
+            if let c = byName[g.group] {
+                orders[g.group] = PlanCalculator.sortOrder(for: c, book: books.first(where: { $0.id == c.bookID }))
+            } else {
+                orders[g.group] = []
+            }
+        }
+        // Stable sort: by group's first appearance, then by type order within the group.
+        var groupFirst: [String: Int] = [:]
+        for (i, g) in data.goals.enumerated() where groupFirst[g.group] == nil { groupFirst[g.group] = i }
+        data.goals = data.goals.enumerated().sorted { a, b in
+            let ga = groupFirst[a.element.group] ?? 0, gb = groupFirst[b.element.group] ?? 0
+            if ga != gb { return ga < gb }
+            let order = orders[a.element.group] ?? []
+            let ia = order.firstIndex(of: a.element.name) ?? (order.count + a.offset)
+            let ib = order.firstIndex(of: b.element.name) ?? (order.count + b.offset)
+            if ia != ib { return ia < ib }
+            return a.offset < b.offset
+        }.map { $0.element }
+    }
+}
+
 // MARK: - Upgrading generic material names
 
 extension Store {

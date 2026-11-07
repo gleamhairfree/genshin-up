@@ -6,11 +6,12 @@ struct CharacterPlan: Codable, Hashable {
     var targetLevel: Int = 90
     var talentsToMax: Int = 3
     var startTalentLevel: Int = 1
+    var targetTalentLevel: Int = 10
     var includeExtras: Bool = true
 
     init() {}
 
-    enum CodingKeys: String, CodingKey { case currentLevel, targetLevel, talentsToMax, startTalentLevel, includeExtras }
+    enum CodingKeys: String, CodingKey { case currentLevel, targetLevel, talentsToMax, startTalentLevel, targetTalentLevel, includeExtras }
 
     init(from decoder: Decoder) throws {
         let c = try decoder.container(keyedBy: CodingKeys.self)
@@ -18,6 +19,7 @@ struct CharacterPlan: Codable, Hashable {
         targetLevel = try c.decodeIfPresent(Int.self, forKey: .targetLevel) ?? 90
         talentsToMax = try c.decodeIfPresent(Int.self, forKey: .talentsToMax) ?? 3
         startTalentLevel = try c.decodeIfPresent(Int.self, forKey: .startTalentLevel) ?? 1
+        targetTalentLevel = try c.decodeIfPresent(Int.self, forKey: .targetTalentLevel) ?? 10
         includeExtras = try c.decodeIfPresent(Bool.self, forKey: .includeExtras) ?? true
     }
 
@@ -140,14 +142,16 @@ enum PlanCalculator {
         // Talents
         let count = min(max(plan.talentsToMax, 0), 3)
         let start = min(max(plan.startTalentLevel, 1), 10)
-        if count > 0 && start < 10 {
-            for step in talentSteps[(start - 1)...] {
+        let end = min(max(plan.targetTalentLevel, 1), 10)
+        if count > 0 && start < end {
+            let steps = talentSteps[(start - 1)..<(end - 1)]
+            for step in steps {
                 add(bookNames[step.bookTier], step.book * count)
             }
-            for step in talentSteps[(start - 1)...] {
+            for step in steps {
                 add(talentCommon[step.commonTier], step.common * count)
             }
-            for step in talentSteps[(start - 1)...] {
+            for step in steps {
                 add(weekly, step.weekly * count)
                 add("Crown of Insight", step.crown * count)
                 mora += step.mora * count
@@ -155,7 +159,21 @@ enum PlanCalculator {
         }
 
         if plan.includeExtras { add("Mora", mora) }
-        return out
+
+        // Group by type so related items sit together (e.g. all three common-drop tiers).
+        let gemNames = gemTiers.map { "\(gem) \($0)" }
+        let order: [String] = gemNames + [boss ?? "", local] + ascCommon + talentCommon + bookNames
+            + [weekly, "Crown of Insight", "Hero's Wit", "Mora"]
+        return out.enumerated().sorted { a, b in
+            let ia = order.firstIndex(of: a.element.name) ?? (order.count + a.offset)
+            let ib = order.firstIndex(of: b.element.name) ?? (order.count + b.offset)
+            return ia < ib
+        }.map { $0.element }
+    }
+
+    /// Display order for a character's items (used to tidy existing lists).
+    static func sortOrder(for character: CharacterEntry, book: TalentBook?) -> [String] {
+        items(for: character, book: book, plan: .full).map { $0.name }
     }
 }
 

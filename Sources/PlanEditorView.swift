@@ -77,13 +77,26 @@ struct PlanEditorView: View {
                 }
 
                 Section {
-                    Stepper("Talents to max (Lv. 10): \(plan.talentsToMax)", value: $plan.talentsToMax, in: 0...3)
+                    Stepper("Talents to raise: \(plan.talentsToMax)", value: $plan.talentsToMax, in: 0...3)
                     if plan.talentsToMax > 0 {
-                        Stepper("Starting from talent Lv. \(plan.startTalentLevel)", value: $plan.startTalentLevel, in: 1...9)
-                        Button("Use \(c.name)'s current talents") {
-                            plan.startTalentLevel = min(9, max(1, c.talents.min() ?? 1))
+                        Stepper("From talent Lv. \(plan.startTalentLevel)", value: $plan.startTalentLevel, in: 1...9)
+                        Picker("Raise to", selection: $plan.targetTalentLevel) {
+                            ForEach(Array((plan.startTalentLevel + 1)...10).reversed(), id: \.self) { lvl in
+                                Text(lvl == 10 ? "Lv. 10 (max, needs a Crown)" : "Lv. \(lvl)").tag(lvl)
+                            }
                         }
-                        .font(.footnote)
+                        HStack(spacing: 8) {
+                            Button("Lv. 9") { plan.targetTalentLevel = 9 }
+                                .buttonStyle(.bordered)
+                            Button("Lv. 10") { plan.targetTalentLevel = 10 }
+                                .buttonStyle(.bordered)
+                            Spacer()
+                            Button("Use current talents") {
+                                plan.startTalentLevel = min(9, max(1, c.talents.min() ?? 1))
+                            }
+                            .font(.footnote)
+                            .buttonStyle(.borderless)
+                        }
                     }
                     Toggle("Include Mora & Hero's Wit", isOn: $plan.includeExtras)
                 } header: {
@@ -151,6 +164,9 @@ struct PlanEditorView: View {
         .onAppear {
             if selectedID.isEmpty, let id = characterID { selectedID = id }
             loadPlan()
+        }
+        .onChange(of: plan.startTalentLevel) { start in
+            if plan.targetTalentLevel <= start { plan.targetTalentLevel = min(10, start + 1) }
         }
         .onChange(of: selectedID) { _ in
             savedMessage = nil

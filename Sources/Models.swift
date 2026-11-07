@@ -274,6 +274,7 @@ final class Store: ObservableObject {
         }
         Store.mergePresets(into: &loaded)
         Store.upgradeGenericGoals(in: &loaded)
+        Store.sortGoalsByType(in: &loaded)
         data = loaded
         refreshResets()
     }
@@ -434,6 +435,7 @@ final class Store: ObservableObject {
               var decoded = try? Store.decoder.decode(AppData.self, from: raw) else { return false }
         Store.mergePresets(into: &decoded)
         Store.upgradeGenericGoals(in: &decoded)
+        Store.sortGoalsByType(in: &decoded)
         data = decoded
         return true
     }

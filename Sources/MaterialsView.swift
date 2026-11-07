@@ -174,7 +174,9 @@ struct PlanTarget: Identifiable {
 private func planSummary(_ p: CharacterPlan) -> String {
     var parts: [String] = []
     if p.targetLevel > p.currentLevel { parts.append("Lv. \(p.currentLevel)→\(p.targetLevel)") }
-    if p.talentsToMax > 0 { parts.append("\(p.talentsToMax)× talents \(p.startTalentLevel)→10") }
+    if p.talentsToMax > 0 && p.targetTalentLevel > p.startTalentLevel {
+        parts.append("\(p.talentsToMax)× talents \(p.startTalentLevel)→\(p.targetTalentLevel)")
+    }
     return parts.isEmpty ? "No upgrades planned" : parts.joined(separator: " · ")
 }
 
