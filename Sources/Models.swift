@@ -82,6 +82,10 @@ struct CharacterEntry: Codable, Identifiable, Hashable {
     var friendship: Int = 1
     var notes: String = ""
     var isCustom: Bool = false
+    var iconName: String = ""
+    var kqmSlug: String = ""
+    /// True once the user picks a talent book themselves, so app updates don't overwrite it.
+    var bookEdited: Bool = false
 
     init(id: String, name: String, element: String, weapon: String, rarity: Int, region: String, bookID: String, isCustom: Bool = false) {
         self.id = id
@@ -95,7 +99,7 @@ struct CharacterEntry: Codable, Identifiable, Hashable {
     }
 
     enum CodingKeys: String, CodingKey {
-        case id, name, element, weapon, rarity, region, bookID, owned, building, constellation, level, talents, friendship, notes, isCustom
+        case id, name, element, weapon, rarity, region, bookID, owned, building, constellation, level, talents, friendship, notes, isCustom, iconName, kqmSlug, bookEdited
     }
 
     init(from decoder: Decoder) throws {
@@ -116,6 +120,30 @@ struct CharacterEntry: Codable, Identifiable, Hashable {
         friendship = try c.decodeIfPresent(Int.self, forKey: .friendship) ?? 1
         notes = try c.decodeIfPresent(String.self, forKey: .notes) ?? ""
         isCustom = try c.decodeIfPresent(Bool.self, forKey: .isCustom) ?? false
+        iconName = try c.decodeIfPresent(String.self, forKey: .iconName) ?? ""
+        kqmSlug = try c.decodeIfPresent(String.self, forKey: .kqmSlug) ?? ""
+        bookEdited = try c.decodeIfPresent(Bool.self, forKey: .bookEdited) ?? false
+    }
+
+    /// Icon candidates, best first. Images are loaded at runtime from Enka.Network's public asset host.
+    var iconURLs: [URL] {
+        guard !iconName.isEmpty else { return [] }
+        return [
+            "https://enka.network/ui/UI_AvatarIcon_\(iconName).png",
+            "https://enka.network/ui/UI_AvatarIcon_Side_\(iconName).png",
+        ].compactMap { URL(string: $0) }
+    }
+
+    var kqmQuickGuideURL: URL? {
+        let slug = kqmSlug.trimmingCharacters(in: .whitespaces)
+        guard !slug.isEmpty else { return nil }
+        return URL(string: "https://keqingmains.com/q/\(slug)-quickguide/")
+    }
+
+    var kqmInfographicURL: URL? {
+        let slug = kqmSlug.trimmingCharacters(in: .whitespaces)
+        guard !slug.isEmpty else { return nil }
+        return URL(string: "https://keqingmains.com/i/\(slug)/")
     }
 
     var needsTalents: Bool { talents.contains { $0 < 10 } }
@@ -270,8 +298,24 @@ final class Store: ObservableObject {
 
     /// Adds any new preset characters that a newer app version ships with, without touching user edits.
     static func mergePresets(into data: inout AppData) {
+        let presets = GameData.presetCharacters
+        let byID = Dictionary(presets.map { ($0.id, $0) }, uniquingKeysWith: { a, _ in a })
+        // Refresh game facts on characters the user already has, keeping their progress.
+        for i in data.characters.indices {
+            guard let p = byID[data.characters[i].id] else { continue }
+            data.characters[i].name = p.name
+            data.characters[i].element = p.element
+            data.characters[i].weapon = p.weapon
+            data.characters[i].rarity = p.rarity
+            data.characters[i].region = p.region
+            data.characters[i].iconName = p.iconName
+            if data.characters[i].kqmSlug.isEmpty { data.characters[i].kqmSlug = p.kqmSlug }
+            if !data.characters[i].bookEdited && !p.bookID.isEmpty {
+                data.characters[i].bookID = p.bookID
+            }
+        }
         let existing = Set(data.characters.map { $0.id })
-        for p in GameData.presetCharacters where !existing.contains(p.id) {
+        for p in presets where !existing.contains(p.id) {
             data.characters.append(p)
         }
     }

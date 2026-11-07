@@ -114,6 +114,9 @@ enum GameData {
         TalentBook(id: "moonlight", name: "Moonlight", region: "Nod-Krai", group: .monThu, domain: "Lightless Capital"),
         TalentBook(id: "elysium", name: "Elysium", region: "Nod-Krai", group: .tueFri, domain: "Lightless Capital"),
         TalentBook(id: "vagrancy", name: "Vagrancy", region: "Nod-Krai", group: .wedSat, domain: "Lightless Capital"),
+        TalentBook(id: "charity", name: "Charity", region: "Snezhnaya", group: .monThu, domain: "Relics of the Fallen Grace"),
+        TalentBook(id: "fortitude", name: "Fortitude", region: "Snezhnaya", group: .tueFri, domain: "Relics of the Fallen Grace"),
+        TalentBook(id: "glory", name: "Glory", region: "Snezhnaya", group: .wedSat, domain: "Relics of the Fallen Grace"),
     ]
 
     static let weaponMaterials: [WeaponMaterial] = [
@@ -138,117 +141,137 @@ enum GameData {
         WeaponMaterial(name: "Artful Device", region: "Nod-Krai", group: .monThu, domain: "Lost Mooncourt"),
         WeaponMaterial(name: "Long Night Flint", region: "Nod-Krai", group: .tueFri, domain: "Lost Mooncourt"),
         WeaponMaterial(name: "Far-North Scions", region: "Nod-Krai", group: .wedSat, domain: "Lost Mooncourt"),
+        WeaponMaterial(name: "Pale Star Army", region: "Snezhnaya", group: .monThu, domain: "Scars of Cursed Obsession"),
+        WeaponMaterial(name: "Cellared Spiritual Nectar", region: "Snezhnaya", group: .tueFri, domain: "Scars of Cursed Obsession"),
+        WeaponMaterial(name: "Frost Emperor", region: "Snezhnaya", group: .wedSat, domain: "Scars of Cursed Obsession"),
     ]
 
-    /// Name|Element|Weapon|Rarity|Region|BookID  (book may be blank = set it yourself in the app)
+    /// Name|Element|Weapon|Rarity|Region|BookID|IconName|KQMSlug
+    /// Generated from Enka.Network's public game data (store/gi/avatars.json).
     static let presetCharacterData = """
-    Albedo|Geo|Sword|5|Mondstadt|ballad
-    Amber|Pyro|Bow|4|Mondstadt|freedom
-    Barbara|Hydro|Catalyst|4|Mondstadt|freedom
-    Bennett|Pyro|Sword|4|Mondstadt|resistance
-    Diluc|Pyro|Claymore|5|Mondstadt|resistance
-    Diona|Cryo|Bow|4|Mondstadt|freedom
-    Eula|Cryo|Claymore|5|Mondstadt|resistance
-    Fischl|Electro|Bow|4|Mondstadt|ballad
-    Jean|Anemo|Sword|5|Mondstadt|resistance
-    Kaeya|Cryo|Sword|4|Mondstadt|ballad
-    Klee|Pyro|Catalyst|5|Mondstadt|freedom
-    Lisa|Electro|Catalyst|4|Mondstadt|ballad
-    Mika|Cryo|Polearm|4|Mondstadt|
-    Mona|Hydro|Catalyst|5|Mondstadt|resistance
-    Noelle|Geo|Claymore|4|Mondstadt|resistance
-    Razor|Electro|Claymore|4|Mondstadt|ballad
-    Rosaria|Cryo|Polearm|4|Mondstadt|ballad
-    Sucrose|Anemo|Catalyst|4|Mondstadt|freedom
-    Venti|Anemo|Bow|5|Mondstadt|ballad
-    Baizhu|Dendro|Catalyst|5|Liyue|gold
-    Beidou|Electro|Claymore|4|Liyue|gold
-    Chongyun|Cryo|Claymore|4|Liyue|diligence
-    Gaming|Pyro|Claymore|4|Liyue|prosperity
-    Ganyu|Cryo|Bow|5|Liyue|diligence
-    Hu Tao|Pyro|Polearm|5|Liyue|diligence
-    Keqing|Electro|Sword|5|Liyue|prosperity
-    Lan Yan|Anemo|Catalyst|4|Liyue|
-    Ningguang|Geo|Catalyst|4|Liyue|prosperity
-    Qiqi|Cryo|Sword|5|Liyue|prosperity
-    Shenhe|Cryo|Polearm|5|Liyue|prosperity
-    Xiangling|Pyro|Polearm|4|Liyue|diligence
-    Xianyun|Anemo|Catalyst|5|Liyue|gold
-    Xiao|Anemo|Polearm|5|Liyue|prosperity
-    Xingqiu|Hydro|Sword|4|Liyue|gold
-    Xinyan|Pyro|Claymore|4|Liyue|gold
-    Yanfei|Pyro|Catalyst|4|Liyue|gold
-    Yaoyao|Dendro|Polearm|4|Liyue|diligence
-    Yelan|Hydro|Bow|5|Liyue|prosperity
-    Yun Jin|Geo|Polearm|4|Liyue|diligence
-    Zhongli|Geo|Polearm|5|Liyue|gold
-    Arataki Itto|Geo|Claymore|5|Inazuma|elegance
-    Chiori|Geo|Sword|5|Inazuma|
-    Gorou|Geo|Bow|4|Inazuma|light
-    Kaedehara Kazuha|Anemo|Sword|5|Inazuma|diligence
-    Kamisato Ayaka|Cryo|Sword|5|Inazuma|elegance
-    Kamisato Ayato|Hydro|Sword|5|Inazuma|elegance
-    Kirara|Dendro|Sword|4|Inazuma|transience
-    Kujou Sara|Electro|Bow|4|Inazuma|elegance
-    Kuki Shinobu|Electro|Sword|4|Inazuma|elegance
-    Raiden Shogun|Electro|Polearm|5|Inazuma|light
-    Sangonomiya Kokomi|Hydro|Catalyst|5|Inazuma|transience
-    Sayu|Anemo|Claymore|4|Inazuma|light
-    Shikanoin Heizou|Anemo|Catalyst|4|Inazuma|transience
-    Thoma|Pyro|Polearm|4|Inazuma|transience
-    Yae Miko|Electro|Catalyst|5|Inazuma|light
-    Yoimiya|Pyro|Bow|5|Inazuma|transience
-    Yumemizuki Mizuki|Anemo|Catalyst|5|Inazuma|
-    Alhaitham|Dendro|Sword|5|Sumeru|ingenuity
-    Candace|Hydro|Polearm|4|Sumeru|admonition
-    Collei|Dendro|Bow|4|Sumeru|praxis
-    Cyno|Electro|Polearm|5|Sumeru|admonition
-    Dehya|Pyro|Claymore|5|Sumeru|praxis
-    Dori|Electro|Claymore|4|Sumeru|ingenuity
-    Faruzan|Anemo|Bow|4|Sumeru|admonition
-    Kaveh|Dendro|Claymore|4|Sumeru|ingenuity
-    Layla|Cryo|Sword|4|Sumeru|ingenuity
-    Nahida|Dendro|Catalyst|5|Sumeru|ingenuity
-    Nilou|Hydro|Sword|5|Sumeru|praxis
-    Sethos|Electro|Bow|4|Sumeru|
-    Tighnari|Dendro|Bow|5|Sumeru|admonition
-    Wanderer|Anemo|Catalyst|5|Sumeru|praxis
-    Arlecchino|Pyro|Polearm|5|Fontaine|order
-    Charlotte|Cryo|Catalyst|4|Fontaine|
-    Chevreuse|Pyro|Polearm|4|Fontaine|order
-    Clorinde|Electro|Sword|5|Fontaine|
-    Emilie|Dendro|Polearm|5|Fontaine|
-    Escoffier|Cryo|Polearm|5|Fontaine|
-    Freminet|Cryo|Claymore|4|Fontaine|
-    Furina|Hydro|Sword|5|Fontaine|justice
-    Lynette|Anemo|Sword|4|Fontaine|order
-    Lyney|Pyro|Bow|5|Fontaine|equity
-    Navia|Geo|Claymore|5|Fontaine|
-    Neuvillette|Hydro|Catalyst|5|Fontaine|equity
-    Sigewinne|Hydro|Bow|5|Fontaine|
-    Wriothesley|Cryo|Catalyst|5|Fontaine|order
-    Chasca|Anemo|Bow|5|Natlan|conflict
-    Citlali|Cryo|Catalyst|5|Natlan|
-    Iansan|Electro|Polearm|4|Natlan|
-    Ifa|Anemo|Catalyst|4|Natlan|conflict
-    Kachina|Geo|Polearm|4|Natlan|conflict
-    Kinich|Dendro|Claymore|5|Natlan|kindling
-    Mavuika|Pyro|Claymore|5|Natlan|
-    Mualani|Hydro|Catalyst|5|Natlan|
-    Ororon|Electro|Bow|4|Natlan|kindling
-    Varesa|Electro|Catalyst|5|Natlan|conflict
-    Xilonen|Geo|Sword|5|Natlan|kindling
-    Aino|Hydro|Claymore|4|Nod-Krai|elysium
-    Durin|Pyro|Sword|5|Nod-Krai|ballad
-    Flins|Electro|Polearm|5|Nod-Krai|vagrancy
-    Ineffa|Electro|Polearm|5|Nod-Krai|
-    Lauma|Dendro|Catalyst|5|Nod-Krai|moonlight
-    Nefer|Dendro|Catalyst|5|Nod-Krai|elysium
-    Odette|Cryo|Sword|5|Snezhnaya|
-    Alyosha|Electro|Polearm|4|Snezhnaya|
-    Tartaglia|Hydro|Bow|5|Snezhnaya|freedom
-    Aloy|Cryo|Bow|5|Other|freedom
-    Skirk|Cryo|Sword|5|Other|
+    Aino|Hydro|Claymore|4|Nod-Krai|elysium|Aino|aino
+    Albedo|Geo|Sword|5|Mondstadt|ballad|Albedo|albedo
+    Alhaitham|Dendro|Sword|5|Sumeru|ingenuity|Alhatham|alhaitham
+    Aloy|Cryo|Bow|5|Other|freedom|Aloy|aloy
+    Alyosha|Electro|Polearm|4|Snezhnaya|fortitude|Alyosha|alyosha
+    Amber|Pyro|Bow|4|Mondstadt|freedom|Ambor|amber
+    Arataki Itto|Geo|Claymore|5|Inazuma|elegance|Itto|itto
+    Arlecchino|Pyro|Polearm|5|Fontaine|order|Arlecchino|arlecchino
+    Baizhu|Dendro|Catalyst|5|Liyue|gold|Baizhuer|baizhu
+    Barbara|Hydro|Catalyst|4|Mondstadt|freedom|Barbara|barbara
+    Beidou|Electro|Claymore|4|Liyue|gold|Beidou|beidou
+    Bennett|Pyro|Sword|4|Mondstadt|resistance|Bennett|bennett
+    Candace|Hydro|Polearm|4|Sumeru|admonition|Candace|candace
+    Charlotte|Cryo|Catalyst|4|Fontaine|justice|Charlotte|charlotte
+    Chasca|Anemo|Bow|5|Natlan|conflict|Chasca|chasca
+    Chevreuse|Pyro|Polearm|4|Fontaine|order|Chevreuse|chevreuse
+    Chiori|Geo|Sword|5|Inazuma|light|Chiori|chiori
+    Chongyun|Cryo|Claymore|4|Liyue|diligence|Chongyun|chongyun
+    Citlali|Cryo|Catalyst|5|Natlan|kindling|Citlali|citlali
+    Clorinde|Electro|Sword|5|Fontaine|justice|Clorinde|clorinde
+    Collei|Dendro|Bow|4|Sumeru|praxis|Collei|collei
+    Columbina|Hydro|Catalyst|5|Nod-Krai|moonlight|Columbina|columbina
+    Cyno|Electro|Polearm|5|Sumeru|admonition|Cyno|cyno
+    Dahlia|Hydro|Sword|4|Mondstadt|ballad|Dahlia|dahlia
+    Dehya|Pyro|Claymore|5|Sumeru|praxis|Dehya|dehya
+    Diluc|Pyro|Claymore|5|Mondstadt|resistance|Diluc|diluc
+    Diona|Cryo|Bow|4|Mondstadt|freedom|Diona|diona
+    Dori|Electro|Claymore|4|Sumeru|ingenuity|Dori|dori
+    Durin|Pyro|Sword|5|Nod-Krai|ballad|Durin|durin
+    Emilie|Dendro|Polearm|5|Fontaine|order|Emilie|emilie
+    Escoffier|Cryo|Polearm|5|Fontaine|justice|Escoffier|escoffier
+    Eula|Cryo|Claymore|5|Mondstadt|resistance|Eula|eula
+    Faruzan|Anemo|Bow|4|Sumeru|admonition|Faruzan|faruzan
+    Fischl|Electro|Bow|4|Mondstadt|ballad|Fischl|fischl
+    Flins|Electro|Polearm|5|Nod-Krai|vagrancy|Flins|flins
+    Freminet|Cryo|Claymore|4|Fontaine|justice|Freminet|freminet
+    Furina|Hydro|Sword|5|Fontaine|justice|Furina|furina
+    Gaming|Pyro|Claymore|4|Liyue|prosperity|Gaming|gaming
+    Ganyu|Cryo|Bow|5|Liyue|diligence|Ganyu|ganyu
+    Gorou|Geo|Bow|4|Inazuma|light|Gorou|gorou
+    Hu Tao|Pyro|Polearm|5|Liyue|diligence|Hutao|hu-tao
+    Iansan|Electro|Polearm|4|Natlan|contention|Iansan|iansan
+    Ifa|Anemo|Catalyst|4|Natlan|conflict|Ifa|ifa
+    Illuga|Geo|Polearm|4|Nod-Krai|elysium|Illuga|illuga
+    Ineffa|Electro|Polearm|5|Nod-Krai|conflict|Ineffa|ineffa
+    Jahoda|Anemo|Bow|4|Nod-Krai|vagrancy|Jahoda|jahoda
+    Jean|Anemo|Sword|5|Mondstadt|resistance|Qin|jean
+    Kachina|Geo|Polearm|4|Natlan|conflict|Kachina|kachina
+    Kaedehara Kazuha|Anemo|Sword|5|Inazuma|diligence|Kazuha|kazuha
+    Kaeya|Cryo|Sword|4|Mondstadt|ballad|Kaeya|kaeya
+    Kamisato Ayaka|Cryo|Sword|5|Inazuma|elegance|Ayaka|ayaka
+    Kamisato Ayato|Hydro|Sword|5|Inazuma|elegance|Ayato|ayato
+    Kaveh|Dendro|Claymore|4|Sumeru|ingenuity|Kaveh|kaveh
+    Keqing|Electro|Sword|5|Liyue|prosperity|Keqing|keqing
+    Kinich|Dendro|Claymore|5|Natlan|kindling|Kinich|kinich
+    Kirara|Dendro|Sword|4|Inazuma|transience|Momoka|kirara
+    Klee|Pyro|Catalyst|5|Mondstadt|freedom|Klee|klee
+    Kujou Sara|Electro|Bow|4|Inazuma|elegance|Sara|sara
+    Kuki Shinobu|Electro|Sword|4|Inazuma|elegance|Shinobu|shinobu
+    Lan Yan|Anemo|Catalyst|4|Liyue|diligence|Lanyan|lan-yan
+    Lauma|Dendro|Catalyst|5|Nod-Krai|moonlight|Lauma|lauma
+    Layla|Cryo|Sword|4|Sumeru|ingenuity|Layla|layla
+    Linnea|Geo|Bow|5|Nod-Krai|vagrancy|Linnea|linnea
+    Lisa|Electro|Catalyst|4|Mondstadt|ballad|Lisa|lisa
+    Lohen|Cryo|Polearm|5|Mondstadt|resistance|Lohen|lohen
+    Lynette|Anemo|Sword|4|Fontaine|order|Linette|lynette
+    Lyney|Pyro|Bow|5|Fontaine|equity|Liney|lyney
+    Mavuika|Pyro|Claymore|5|Natlan|contention|Mavuika|mavuika
+    Mika|Cryo|Polearm|4|Mondstadt|ballad|Mika|mika
+    Mitya|Electro|Catalyst|5|Snezhnaya|charity|Mitya|mitya
+    Mona|Hydro|Catalyst|5|Mondstadt|resistance|Mona|mona
+    Mualani|Hydro|Catalyst|5|Natlan|contention|Mualani|mualani
+    Nahida|Dendro|Catalyst|5|Sumeru|ingenuity|Nahida|nahida
+    Navia|Geo|Claymore|5|Fontaine|equity|Navia|navia
+    Nefer|Dendro|Catalyst|5|Nod-Krai|elysium|Nefer|nefer
+    Neuvillette|Hydro|Catalyst|5|Fontaine|equity|Neuvillette|neuvillette
+    Nicole|Pyro|Catalyst|5|Nod-Krai|elysium|Nicole|nicole
+    Nilou|Hydro|Sword|5|Sumeru|praxis|Nilou|nilou
+    Ningguang|Geo|Catalyst|4|Liyue|prosperity|Ningguang|ningguang
+    Noelle|Geo|Claymore|4|Mondstadt|resistance|Noel|noelle
+    Odette|Cryo|Sword|5|Snezhnaya|charity|Odette|odette
+    Ororon|Electro|Bow|4|Natlan|kindling|Olorun|ororon
+    Prune|Anemo|Catalyst|4|Nod-Krai|resistance|Prune|prune
+    Qiqi|Cryo|Sword|5|Liyue|prosperity|Qiqi|qiqi
+    Raiden Shogun|Electro|Polearm|5|Inazuma|light|Shougun|raiden
+    Razor|Electro|Claymore|4|Mondstadt|resistance|Razor|razor
+    Rosaria|Cryo|Polearm|4|Mondstadt|ballad|Rosaria|rosaria
+    Sandrone|Cryo|Claymore|5|Nod-Krai|vagrancy|MarionetteNew|sandrone
+    Sangonomiya Kokomi|Hydro|Catalyst|5|Inazuma|transience|Kokomi|kokomi
+    Sayu|Anemo|Claymore|4|Inazuma|light|Sayu|sayu
+    Sethos|Electro|Bow|4|Sumeru|praxis|Sethos|sethos
+    Shenhe|Cryo|Polearm|5|Liyue|prosperity|Shenhe|shenhe
+    Shikanoin Heizou|Anemo|Catalyst|4|Inazuma|transience|Heizo|heizou
+    Sigewinne|Hydro|Bow|5|Fontaine|equity|Sigewinne|sigewinne
+    Skirk|Cryo|Sword|5|Other|contention|SkirkNew|skirk
+    Sucrose|Anemo|Catalyst|4|Mondstadt|freedom|Sucrose|sucrose
+    Tartaglia|Hydro|Bow|5|Snezhnaya|freedom|Tartaglia|tartaglia
+    Thoma|Pyro|Polearm|4|Inazuma|transience|Tohma|thoma
+    Tighnari|Dendro|Bow|5|Sumeru|admonition|Tighnari|tighnari
+    Traveler||Sword|5|Other||PlayerGirl|
+    Valeriy|Electro|Sword|4|Snezhnaya|glory|Valeriy|valeriy
+    Varesa|Electro|Catalyst|5|Natlan|conflict|Varesa|varesa
+    Varka|Anemo|Claymore|5|Mondstadt|freedom|Varka|varka
+    Venti|Anemo|Bow|5|Mondstadt|ballad|Venti|venti
+    Vesna|Anemo|Sword|5|Snezhnaya|glory|Vesna|vesna
+    Vodyanitsa|Hydro|Catalyst|5|Snezhnaya|fortitude|Vodyanitsa|vodyanitsa
+    Wanderer|Anemo|Catalyst|5|Sumeru|praxis|Wanderer|wanderer
+    Wriothesley|Cryo|Catalyst|5|Fontaine|order|Wriothesley|wriothesley
+    Xiangling|Pyro|Polearm|4|Liyue|diligence|Xiangling|xiangling
+    Xianyun|Anemo|Catalyst|5|Liyue|gold|Liuyun|xianyun
+    Xiao|Anemo|Polearm|5|Liyue|prosperity|Xiao|xiao
+    Xilonen|Geo|Sword|5|Natlan|kindling|Xilonen|xilonen
+    Xingqiu|Hydro|Sword|4|Liyue|gold|Xingqiu|xingqiu
+    Xinyan|Pyro|Claymore|4|Liyue|gold|Xinyan|xinyan
+    Yae Miko|Electro|Catalyst|5|Inazuma|light|Yae|yae-miko
+    Yanfei|Pyro|Catalyst|4|Liyue|gold|Feiyan|yanfei
+    Yaoyao|Dendro|Polearm|4|Liyue|diligence|Yaoyao|yaoyao
+    Yelan|Hydro|Bow|5|Liyue|prosperity|Yelan|yelan
+    Yoimiya|Pyro|Bow|5|Inazuma|transience|Yoimiya|yoimiya
+    Yumemizuki Mizuki|Anemo|Catalyst|5|Inazuma|transience|Mizuki|mizuki
+    Yun Jin|Geo|Polearm|4|Liyue|diligence|Yunjin|yun-jin
+    Zhongli|Geo|Polearm|5|Liyue|gold|Zhongli|zhongli
+    Zibai|Geo|Sword|5|Liyue|gold|Zibai|zibai
     """
 
     static var presetCharacters: [CharacterEntry] {
@@ -260,7 +283,7 @@ enum GameData {
                     .map { String($0).trimmingCharacters(in: .whitespaces) }
                 guard parts.count >= 5 else { return nil }
                 let name = parts[0]
-                return CharacterEntry(
+                var c = CharacterEntry(
                     id: "preset:" + name.lowercased(),
                     name: name,
                     element: parts[1],
@@ -269,6 +292,9 @@ enum GameData {
                     region: parts[4],
                     bookID: parts.count > 5 ? parts[5] : ""
                 )
+                c.iconName = parts.count > 6 ? parts[6] : ""
+                c.kqmSlug = parts.count > 7 ? parts[7] : ""
+                return c
             }
     }
 

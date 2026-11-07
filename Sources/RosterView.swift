@@ -84,8 +84,8 @@ struct CharacterRow: View {
     let character: CharacterEntry
 
     var body: some View {
-        HStack(spacing: 10) {
-            ElementDot(element: character.element, size: 12)
+        HStack(spacing: 12) {
+            CharacterIcon(character: character, size: 44, dimmed: !character.owned)
             VStack(alignment: .leading, spacing: 2) {
                 HStack(spacing: 6) {
                     Text(character.name)
@@ -120,8 +120,39 @@ struct CharacterDetailView: View {
 
     private let talentNames = ["Normal Attack", "Elemental Skill", "Elemental Burst"]
 
+    /// Marks the book as user-chosen so future app updates don't overwrite it.
+    private var bookBinding: Binding<String> {
+        Binding(
+            get: { character.bookID },
+            set: { newValue in
+                character.bookID = newValue
+                character.bookEdited = true
+            }
+        )
+    }
+
     var body: some View {
         Form {
+            Section {
+                HStack(spacing: 16) {
+                    CharacterIcon(character: character, size: 76)
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(character.name).font(.title3.weight(.bold))
+                        Stars(count: character.rarity)
+                        HStack(spacing: 6) {
+                            ElementDot(element: character.element)
+                            Text("\(character.element) · \(character.weapon)")
+                                .font(.caption).foregroundColor(.secondary)
+                        }
+                        if let b = store.book(character.bookID) {
+                            Text("\(b.name) books · \(b.group.short)")
+                                .font(.caption).foregroundColor(.secondary)
+                        }
+                    }
+                }
+                .padding(.vertical, 4)
+            }
+
             Section {
                 Toggle("Owned", isOn: $character.owned)
                 Toggle("Currently building", isOn: $character.building)
@@ -130,7 +161,7 @@ struct CharacterDetailView: View {
             }
 
             Section("Progress") {
-                Stepper("Level \(character.level)", value: $character.level, in: 1...100)
+                IntField(title: "Level", value: $character.level, range: 1...100, width: 80)
                 Stepper("Constellation C\(character.constellation)", value: $character.constellation, in: 0...6)
                 Stepper("Friendship \(character.friendship)", value: $character.friendship, in: 1...10)
             }
@@ -141,8 +172,27 @@ struct CharacterDetailView: View {
                 }
             }
 
+            if character.kqmQuickGuideURL != nil {
+                Section {
+                    if let url = character.kqmQuickGuideURL {
+                        Link(destination: url) {
+                            Label("KQM Quick Guide", systemImage: "book.pages")
+                        }
+                    }
+                    if let url = character.kqmInfographicURL {
+                        Link(destination: url) {
+                            Label("KQM Infographic", systemImage: "photo")
+                        }
+                    }
+                } header: {
+                    Text("Guides")
+                } footer: {
+                    Text("Opens KeqingMains in Safari. If a link doesn't load, KQM may not have that guide yet or uses a different name – you can change the guide name below.")
+                }
+            }
+
             Section("Info") {
-                Picker("Talent book", selection: $character.bookID) {
+                Picker("Talent book", selection: bookBinding) {
                     Text("Not set").tag("")
                     ForEach(store.allBooks) { b in
                         Text("\(b.name) (\(b.group.short))").tag(b.id)
@@ -167,6 +217,15 @@ struct CharacterDetailView: View {
                 Picker("Region", selection: $character.region) {
                     ForEach(GameData.regions, id: \.self) { Text($0).tag($0) }
                 }
+                HStack {
+                    Text("KQM guide name")
+                    Spacer()
+                    TextField("e.g. hu-tao", text: $character.kqmSlug)
+                        .multilineTextAlignment(.trailing)
+                        .textInputAutocapitalization(.never)
+                        .autocorrectionDisabled()
+                        .foregroundColor(.secondary)
+                }
             }
 
             Section("Notes") {
@@ -187,6 +246,8 @@ struct CharacterDetailView: View {
             }
         }
         .navigationTitle(character.name)
+        .navigationBarTitleDisplayMode(.inline)
+        .keyboardDoneButton()
         .confirmationDialog("Delete \(character.name)?", isPresented: $confirmDelete, titleVisibility: .visible) {
             Button("Delete", role: .destructive) {
                 let id = character.id
@@ -251,6 +312,8 @@ struct AddCharacterView: View {
                             element: element, weapon: weapon, rarity: rarity,
                             region: region, bookID: bookID, isCustom: true)
                         c.owned = owned
+                        c.bookEdited = true
+                        c.kqmSlug = c.name.lowercased().replacingOccurrences(of: " ", with: "-")
                         store.data.characters.append(c)
                         dismiss()
                     }

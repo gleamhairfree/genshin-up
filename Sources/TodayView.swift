@@ -120,8 +120,29 @@ struct TodayView: View {
                             Text(pair.book.name).font(.subheadline.weight(.semibold))
                             Text("· \(pair.book.domain)").font(.caption).foregroundColor(.secondary)
                         }
-                        Text(pair.characters.map { c in c.building ? "⭐️ \(c.name)" : c.name }.joined(separator: ", "))
-                            .font(.caption)
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            HStack(spacing: 10) {
+                                ForEach(pair.characters) { c in
+                                    VStack(spacing: 2) {
+                                        CharacterIcon(character: c, size: 40)
+                                            .overlay(alignment: .topTrailing) {
+                                                if c.building {
+                                                    Image(systemName: "star.fill")
+                                                        .font(.system(size: 10))
+                                                        .foregroundColor(.yellow)
+                                                        .padding(2)
+                                                        .background(Circle().fill(Color.black.opacity(0.6)))
+                                                }
+                                            }
+                                        Text(c.name.split(separator: " ").last.map(String.init) ?? c.name)
+                                            .font(.system(size: 10))
+                                            .lineLimit(1)
+                                            .frame(width: 52)
+                                    }
+                                }
+                            }
+                            .padding(.vertical, 2)
+                        }
                     }
                 }
             }
@@ -129,7 +150,7 @@ struct TodayView: View {
         } header: {
             Text("Farm today")
         } footer: {
-            Text("⭐️ = marked as currently building.")
+            Text("★ = marked as currently building.")
         }
     }
 

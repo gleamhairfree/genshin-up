@@ -142,22 +142,8 @@ struct GoalEditor: View {
                     TextField("Group (e.g. character name)", text: $goal.group)
                 }
                 Section("Count") {
-                    HStack {
-                        Text("Have")
-                        Spacer()
-                        TextField("0", value: $goal.have, format: .number)
-                            .keyboardType(.numberPad)
-                            .multilineTextAlignment(.trailing)
-                            .frame(width: 100)
-                    }
-                    HStack {
-                        Text("Need")
-                        Spacer()
-                        TextField("1", value: $goal.need, format: .number)
-                            .keyboardType(.numberPad)
-                            .multilineTextAlignment(.trailing)
-                            .frame(width: 100)
-                    }
+                    IntField(title: "Have", value: $goal.have, range: 0...9_999_999)
+                    IntField(title: "Need", value: $goal.need, range: 0...9_999_999)
                     Text("\(goal.remaining) more to go").foregroundColor(.secondary)
                 }
                 Section("Note") {
@@ -172,6 +158,7 @@ struct GoalEditor: View {
                     }
                 }
             }
+            .keyboardDoneButton()
             .navigationTitle(isNew ? "New item" : "Edit item")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {

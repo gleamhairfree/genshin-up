@@ -54,11 +54,16 @@ struct MoreView: View {
                 }
 
                 Section {
+                    Button("Re-download character icons") {
+                        Task { await ImageStore.shared.clearDiskCache() }
+                    }
                     Button("Reset all data", role: .destructive) { confirmReset = true }
+                } footer: {
+                    Text("Character icons are loaded from Enka.Network the first time you see them, then saved on your phone.")
                 }
 
                 Section("About") {
-                    Text("Unofficial fan-made tracker. Not affiliated with HoYoverse. Character book assignments can be edited in each character's page if anything is missing or changes.")
+                    Text("Unofficial fan-made tracker. Not affiliated with HoYoverse, Enka.Network or KQM. Character data from Enka.Network; guide links go to keqingmains.com. Talent books can be changed on each character's page.")
                         .font(.footnote).foregroundColor(.secondary)
                 }
             }
@@ -79,9 +84,9 @@ struct WishView: View {
         let w = store.data.wish
         Form {
             Section("Savings") {
-                numberRow("Primogems", value: $store.data.wish.primogems)
-                numberRow("Intertwined Fates", value: $store.data.wish.fates)
-                numberRow("Masterless Starglitter", value: $store.data.wish.starglitter)
+                IntField(title: "Primogems", value: $store.data.wish.primogems)
+                IntField(title: "Intertwined Fates", value: $store.data.wish.fates)
+                IntField(title: "Masterless Starglitter", value: $store.data.wish.starglitter)
             }
             Section("Pity (character banner)") {
                 Stepper("Current pity: \(w.pity)", value: $store.data.wish.pity, in: 0...89)
@@ -114,17 +119,7 @@ struct WishView: View {
             }
         }
         .navigationTitle("Wishes")
-    }
-
-    private func numberRow(_ title: String, value: Binding<Int>) -> some View {
-        HStack {
-            Text(title)
-            Spacer()
-            TextField("0", value: value, format: .number)
-                .keyboardType(.numberPad)
-                .multilineTextAlignment(.trailing)
-                .frame(width: 110)
-        }
+        .keyboardDoneButton()
     }
 }
 

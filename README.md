@@ -4,7 +4,7 @@ A small SwiftUI iOS app (iOS 16+) that stores everything locally on your phone.
 
 ## Features
 - **Today** – server day & countdown to the 4:00 reset, Original Resin tracker (with optional "resin full" notification), which of *your* characters can farm talent books today, and daily / weekly / one-off checklists that reset themselves.
-- **Roster** – every character with owned toggle, level, constellation, friendship, talent levels, a "currently building" flag and notes. Filter by owned / element, search, and add new characters yourself.
+- **Roster** – all 122 characters through 7.x with icons, owned toggle, typed-in level, constellation, friendship, talent levels, a "currently building" flag, notes and KQM Quick Guide / Infographic links. Filter by owned / element, search, and add new characters yourself.
 - **Materials** – "have / need / X more to go" trackers with +/- buttons, grouped by character. A template fills in the full shopping list for a character's ascension (1→90) and talents (1→10), using their real talent book and element gem names.
 - **Domains** – pick any weekday to see every talent-book and weapon-material domain that's open, and which characters use each book.
 - **More** – server selection, wish savings & pity calculator, edit checklist tasks, add custom talent books (for new regions), and JSON backup/restore.
@@ -22,6 +22,7 @@ iOS apps must be compiled with Xcode on macOS, so this repo uses a free GitHub A
 To build locally on a Mac instead: `./build.sh` → `build/GenshinTracker.ipa`.
 
 ## Notes
+- Character data comes from Enka.Network's public game data; icons load from enka.network the first time and are cached on the phone.
 - The IPA is unsigned (ad-hoc), as Feather expects.
 - Talent book assignments for some newer characters are left blank – set them on the character's page. New regions' books can be added under More → Custom talent books.
 - Back up via More → Copy backup before re-signing with a different certificate, as that can wipe app data.
