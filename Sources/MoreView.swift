@@ -93,6 +93,8 @@ struct MoreView: View {
                     Text("Character icons are loaded from Enka.Network the first time you see them, then saved on your phone.")
                 }
 
+                UpdatesSection()
+
                 Section("About") {
                     Text("Unofficial fan-made tracker. Not affiliated with HoYoverse, Enka.Network or KQM. Character data from Enka.Network; guide links go to keqingmains.com. Talent books can be changed on each character's page.")
                         .font(.footnote).foregroundColor(.secondary)

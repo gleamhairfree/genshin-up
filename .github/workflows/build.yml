@@ -2,6 +2,7 @@ name: Build IPA
 
 on:
   push:
+    branches: [main]
   workflow_dispatch:
 
 jobs:
@@ -9,6 +10,8 @@ jobs:
     runs-on: macos-15
     permissions:
       contents: write
+    env:
+      BUILD_NUMBER: ${{ github.run_number }}
     steps:
       - uses: actions/checkout@v4
 
@@ -20,19 +23,29 @@ jobs:
           chmod +x build.sh
           ./build.sh
 
+      - name: Write Feather / AltStore source
+        env:
+          RELEASE_NOTES: ${{ github.event.head_commit.message }}
+        run: python3 scripts/make_source.py
+
       - name: Upload IPA
         uses: actions/upload-artifact@v4
         with:
           name: GenshinTracker-ipa
-          path: build/GenshinTracker.ipa
+          path: |
+            build/GenshinTracker.ipa
+            build/source.json
           if-no-files-found: error
 
-      - name: Publish as a release (easy download on iPhone)
-        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+      - name: Publish release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: build-${{ github.run_number }}
-          name: Teyvat Tracker build ${{ github.run_number }}
-          files: build/GenshinTracker.ipa
+          name: Teyvat Tracker 1.0.${{ github.run_number }}
+          body: ${{ github.event.head_commit.message }}
+          make_latest: true
+          files: |
+            build/GenshinTracker.ipa
+            build/source.json
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

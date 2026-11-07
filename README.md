@@ -21,6 +21,15 @@ iOS apps must be compiled with Xcode on macOS, so this repo uses a free GitHub A
 
 To build locally on a Mac instead: `./build.sh` → `build/GenshinTracker.ipa`.
 
+## Updating with Feather (one tap)
+Add this source in Feather → **Sources → +**:
+
+```
+https://github.com/gleamhairfree/genshin-up/releases/latest/download/source.json
+```
+
+Every push to `main` builds a new version (1.0.N) and updates the source, so Feather shows it as an update. The app's **More → Updates** section can also check for new versions.
+
 ## Notes
 - Material data and item icons come from paimon.moe's public data. Character data comes from Enka.Network's public game data; icons load from enka.network the first time and are cached on the phone.
 - The IPA is unsigned (ad-hoc), as Feather expects.

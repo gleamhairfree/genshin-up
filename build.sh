@@ -27,6 +27,11 @@ xcrun --sdk iphoneos swiftc \
 
 echo "==> Copying resources"
 cp "$ROOT/Resources/Info.plist" "$APP/Info.plist"
+# Each CI build gets a higher version so Feather can see there's an update.
+BUILD_NUMBER="${BUILD_NUMBER:-1}"
+/usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString 1.0.${BUILD_NUMBER}" "$APP/Info.plist"
+/usr/libexec/PlistBuddy -c "Set :CFBundleVersion ${BUILD_NUMBER}" "$APP/Info.plist"
+echo "Version 1.0.${BUILD_NUMBER} (${BUILD_NUMBER})"
 cp "$ROOT"/Resources/Icons/*.png "$APP/"
 
 echo "==> Compiling asset catalog (app icon)"
