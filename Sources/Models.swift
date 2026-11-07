@@ -159,6 +159,8 @@ struct MaterialGoal: Codable, Identifiable, Hashable {
     var have: Int = 0
     var need: Int = 1
     var note: String = ""
+    /// Remembers the count from before a double-tap "mark complete", so a second double-tap can undo it.
+    var previousHave: Int? = nil
 
     var remaining: Int { max(0, need - have) }
     var progress: Double { need <= 0 ? 1 : min(1, Double(have) / Double(need)) }
@@ -404,6 +406,20 @@ final class Store: ObservableObject {
         if let i = data.characters.firstIndex(where: { $0.id == id }) {
             data.characters[i].owned.toggle()
         }
+    }
+
+    func toggleGoalComplete(_ id: UUID) {
+        guard let i = data.goals.firstIndex(where: { $0.id == id }) else { return }
+        var g = data.goals[i]
+        if g.isDone {
+            let back = g.previousHave ?? 0
+            g.have = back >= g.need ? 0 : back
+            g.previousHave = nil
+        } else {
+            g.previousHave = g.have
+            g.have = g.need
+        }
+        data.goals[i] = g
     }
 
     func toggleTask(_ id: UUID) {

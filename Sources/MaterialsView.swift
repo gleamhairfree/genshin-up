@@ -31,6 +31,8 @@ struct MaterialsView: View {
                         let done = store.data.goals.filter { $0.isDone }.count
                         ProgressRow(title: "Goals complete", done: done, total: total)
                         Toggle("Show completed", isOn: $showCompleted)
+                        Text("Tip: double-tap an item's name to mark it collected (double-tap again to undo). Tap once to edit.")
+                            .font(.caption).foregroundColor(.secondary)
                         NavigationLink("Use a character template") { TemplateView(preselected: nil) }
                     }
                 }
@@ -91,31 +93,44 @@ struct GoalRow: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
-            HStack {
-                Button(action: onEdit) {
+            HStack(spacing: 10) {
+                HStack(spacing: 10) {
+                    ItemIcon(name: goal.name, size: 38)
+                        .opacity(goal.isDone ? 0.5 : 1)
                     VStack(alignment: .leading, spacing: 2) {
                         Text(goal.name)
                             .font(.subheadline.weight(.semibold))
                             .foregroundColor(goal.isDone ? .secondary : .primary)
+                            .strikethrough(goal.isDone)
                             .multilineTextAlignment(.leading)
                         if goal.isDone {
                             Label("Done", systemImage: "checkmark.circle.fill")
                                 .font(.caption).foregroundColor(.green)
                         } else {
-                            Text("\(goal.remaining) more to go")
+                            Text("\(goal.remaining.formatted()) more to go")
                                 .font(.caption).foregroundColor(.orange)
                         }
                     }
+                    Spacer(minLength: 0)
                 }
-                .buttonStyle(.borderless)
-                Spacer()
+                .contentShape(Rectangle())
+                .onTapGesture(count: 2) {
+                    UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+                    withAnimation(.easeInOut(duration: 0.2)) {
+                        store.toggleGoalComplete(goal.id)
+                    }
+                }
+                .onTapGesture(count: 1) { onEdit() }
+
                 Button { store.adjustGoal(goal.id, by: -1) } label: {
                     Image(systemName: "minus.circle").font(.title3)
                 }
                 .buttonStyle(.borderless)
                 Text("\(goal.have)/\(goal.need)")
-                    .font(.subheadline.monospacedDigit())
-                    .frame(minWidth: 64)
+                    .font(.footnote.monospacedDigit())
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.6)
+                    .frame(minWidth: 56)
                 Button { store.adjustGoal(goal.id, by: 1) } label: {
                     Image(systemName: "plus.circle.fill").font(.title3)
                 }
@@ -138,12 +153,15 @@ struct GoalEditor: View {
         NavigationStack {
             Form {
                 Section("Item") {
-                    TextField("Item name (e.g. Philosophies of Ballad)", text: $goal.name)
+                    HStack(spacing: 12) {
+                        ItemIcon(name: goal.name, size: 44)
+                        TextField("Item name (e.g. Philosophies of Ballad)", text: $goal.name)
+                    }
                     TextField("Group (e.g. character name)", text: $goal.group)
                 }
                 Section("Count") {
-                    IntField(title: "Have", value: $goal.have, range: 0...9_999_999)
-                    IntField(title: "Need", value: $goal.need, range: 0...9_999_999)
+                    IntField(title: "Have", value: $goal.have, range: 0...999_999_999)
+                    IntField(title: "Need", value: $goal.need, range: 0...999_999_999)
                     Text("\(goal.remaining) more to go").foregroundColor(.secondary)
                 }
                 Section("Note") {
@@ -223,7 +241,7 @@ struct TemplateView: View {
             Section {
                 Toggle("Ascension (Lv 1 → 90)", isOn: $ascension)
                 Stepper("Talents to raise 1 → 10: \(talentCount)", value: $talentCount, in: 0...3)
-                Toggle("Include mora, EXP & common drops", isOn: $includeExtras)
+                Toggle("Include Mora & Hero's Wit", isOn: $includeExtras)
             } footer: {
                 Text("Totals assume starting from scratch. Edit the 'have' counts afterwards for what you already own.")
             }
@@ -261,39 +279,47 @@ struct TemplateView: View {
     private func generate() {
         guard let c = selected else { return }
         var items: [(String, Int)] = []
+        let mats = MaterialData.byCharacter[c.name]
+        let book = store.book(c.bookID)
 
         if ascension {
-            let gem = gemName(c.element)
-            for (name, count) in GameData.ascensionTotals {
-                let isGem = name.hasPrefix("Gem")
-                let isExtra = name.hasPrefix("Common") || name.hasPrefix("Mora") || name.hasPrefix("Hero")
-                if isExtra && !includeExtras { continue }
-                if isGem {
-                    let tier = name.replacingOccurrences(of: "Gem ", with: "")
-                    items.append(("\(gem) \(tier)", count))
-                } else if name.hasPrefix("Common") {
-                    items.append(("Ascension: \(name.lowercased())", count))
-                } else {
-                    items.append((name, count))
+            if let mats {
+                for (name, count) in mats.ascension { items.append((name, count)) }
+            } else {
+                let gem = gemName(c.element)
+                for (name, count) in GameData.ascensionTotals where name.hasPrefix("Gem") || name == "Boss material" || name == "Local specialty" {
+                    if name.hasPrefix("Gem") {
+                        items.append(("\(gem) \(name.replacingOccurrences(of: "Gem ", with: ""))", count))
+                    } else {
+                        items.append((name, count))
+                    }
                 }
+            }
+            if includeExtras {
+                items.append(("Mora", 420_000))
+                items.append(("Hero's Wit", 419))
             }
         }
 
         if talentCount > 0 {
-            let book = store.book(c.bookID)
             for (tier, count) in GameData.talentTotals {
                 let name = book?.tiers[tier] ?? ["Teachings (talent book)", "Guide (talent book)", "Philosophies (talent book)"][tier]
                 items.append((name, count * talentCount))
             }
-            for (name, count) in GameData.talentExtras {
-                let isExtra = name.hasPrefix("Common") || name.hasPrefix("Mora")
-                if isExtra && !includeExtras { continue }
-                let label = name.hasPrefix("Common") ? "Talents: \(name.lowercased())" : name
-                items.append((label, count * talentCount))
+            let commonTotals = [18, 66, 93]
+            for t in 0..<3 {
+                let name = (mats?.common.count ?? 0) == 3 ? mats!.common[t] : "Talent common drop (tier \(t + 1))"
+                items.append((name, commonTotals[t] * talentCount))
+            }
+            let boss = (mats?.weeklyBoss.isEmpty ?? true) ? "Weekly boss material" : mats!.weeklyBoss
+            items.append((boss, 6 * talentCount))
+            items.append(("Crown of Insight", 1 * talentCount))
+            if includeExtras {
+                items.append(("Mora", 1_652_500 * talentCount))
             }
         }
 
-        // Merge "Mora" lines from ascension + talents.
+        // Merge duplicates (e.g. common drops used by both ascension and talents, Mora).
         var merged: [(String, Int)] = []
         for (n, v) in items {
             if let i = merged.firstIndex(where: { $0.0 == n }) {
