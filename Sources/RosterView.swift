@@ -117,6 +117,7 @@ struct CharacterDetailView: View {
     @Environment(\.dismiss) private var dismiss
     @Binding var character: CharacterEntry
     @State private var confirmDelete = false
+    @State private var browserPage: BrowserPage?
 
     private let talentNames = ["Normal Attack", "Elemental Skill", "Elemental Burst"]
 
@@ -175,19 +176,23 @@ struct CharacterDetailView: View {
             if character.kqmQuickGuideURL != nil {
                 Section {
                     if let url = character.kqmQuickGuideURL {
-                        Link(destination: url) {
+                        Button {
+                            browserPage = BrowserPage(url: url)
+                        } label: {
                             Label("KQM Quick Guide", systemImage: "book.pages")
                         }
                     }
                     if let url = character.kqmInfographicURL {
-                        Link(destination: url) {
+                        Button {
+                            browserPage = BrowserPage(url: url)
+                        } label: {
                             Label("KQM Infographic", systemImage: "photo")
                         }
                     }
                 } header: {
                     Text("Guides")
                 } footer: {
-                    Text("Opens KeqingMains in Safari. If a link doesn't load, KQM may not have that guide yet or uses a different name – you can change the guide name below.")
+                    Text("Opens KeqingMains in a popup – tap Done to come back. If a link doesn't load, KQM may not have that guide yet or uses a different name – you can change the guide name below.")
                 }
             }
 
@@ -248,6 +253,7 @@ struct CharacterDetailView: View {
         .navigationTitle(character.name)
         .navigationBarTitleDisplayMode(.inline)
         .keyboardDoneButton()
+        .inAppBrowser($browserPage, tint: Theme.accent(store.data.accent))
         .confirmationDialog("Delete \(character.name)?", isPresented: $confirmDelete, titleVisibility: .visible) {
             Button("Delete", role: .destructive) {
                 let id = character.id
