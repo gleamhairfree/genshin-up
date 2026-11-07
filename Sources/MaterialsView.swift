@@ -1,3 +1,5 @@
+import SwiftUI
+
 struct MaterialsView: View {
     @EnvironmentObject var store: Store
     @State private var showCompleted = true
