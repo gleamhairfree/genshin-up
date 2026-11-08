@@ -18,6 +18,7 @@ struct GenshinTrackerApp: App {
                     if phase == .active {
                         store.refreshResets()
                         store.rescheduleDomainReminders()
+                        store.updateWidget()
                     }
                 }
         }

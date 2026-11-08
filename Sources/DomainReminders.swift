@@ -24,7 +24,7 @@ extension Store {
     }
 
     /// Characters still needing talent books (plan not finished, or talents below 10).
-    private func needsBooks(_ c: CharacterEntry) -> Bool {
+    func needsBooks(_ c: CharacterEntry) -> Bool {
         // If the Materials tab tracks this character's talent books, they only count while
         // at least one book item is still short – regardless of the notification toggle.
         if let b = book(c.bookID) {
@@ -58,7 +58,10 @@ extension Store {
     /// Debounced so rapid edits don't reschedule on every keystroke.
     func scheduleReminderRefresh() {
         reminderWorkItem?.cancel()
-        let item = DispatchWorkItem { [weak self] in self?.rescheduleDomainReminders() }
+        let item = DispatchWorkItem { [weak self] in
+            self?.rescheduleDomainReminders()
+            self?.updateWidget()
+        }
         reminderWorkItem = item
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.5, execute: item)
     }

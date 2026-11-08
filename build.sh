@@ -46,8 +46,25 @@ xcrun actool "$ROOT/Resources/Assets.xcassets" \
 
 printf 'APPL????' > "$APP/PkgInfo"
 
+echo "==> Building home screen widget extension"
+WIDGET="$APP/PlugIns/TeyvatWidget.appex"
+mkdir -p "$WIDGET"
+xcrun --sdk iphoneos swiftc \
+  -sdk "$SDK" \
+  -target "arm64-apple-ios${MIN_IOS}" \
+  -parse-as-library \
+  -application-extension \
+  -O -whole-module-optimization \
+  -module-name TeyvatWidget \
+  "$ROOT"/Widget/*.swift \
+  -o "$WIDGET/TeyvatWidget"
+cp "$ROOT/Widget/Info.plist" "$WIDGET/Info.plist"
+/usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString 1.0.${BUILD_NUMBER}" "$WIDGET/Info.plist"
+/usr/libexec/PlistBuddy -c "Set :CFBundleVersion ${BUILD_NUMBER}" "$WIDGET/Info.plist"
+
 echo "==> Ad-hoc signing (Feather will re-sign with your certificate)"
-codesign --force --sign - --timestamp=none "$APP" || true
+codesign --force --sign - --timestamp=none --entitlements "$ROOT/Widget/Widget.entitlements" "$WIDGET" || true
+codesign --force --sign - --timestamp=none --entitlements "$ROOT/Resources/App.entitlements" "$APP" || true
 
 echo "==> Packaging IPA"
 cd "$BUILD"
