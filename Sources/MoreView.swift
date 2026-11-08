@@ -99,6 +99,8 @@ struct MoreView: View {
 
                 UpdatesSection()
 
+                WidgetStatusSection()
+
                 Section("About") {
                     Text("Unofficial fan-made tracker. Not affiliated with HoYoverse, Enka.Network or KQM. Character data from Enka.Network; guide links go to keqingmains.com. Talent books can be changed on each character's page.")
                         .font(.footnote).foregroundColor(.secondary)
