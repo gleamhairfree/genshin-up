@@ -29,6 +29,9 @@ struct MaterialsView: View {
                         let total = store.data.goals.count
                         let done = store.data.goals.filter { $0.isDone }.count
                         ProgressRow(title: "Goals complete", done: done, total: total)
+                        NavigationLink { FarmingPlannerView() } label: {
+                            Label("Farming plan & schedule", systemImage: "calendar.badge.clock")
+                        }
                         Toggle("Show completed", isOn: $showCompleted)
                         Text("Tip: tap a character's name to collapse it. Double-tap an item's name to mark it collected (again to undo); tap once to edit.")
                             .font(.caption).foregroundColor(.secondary)

@@ -53,6 +53,10 @@ struct TodayView: View {
 
             wishSection()
 
+            if !editMode.isEditing {
+                Section("Today's farming plan") { TodayFarmingCard() }
+            }
+
             farmSection(day: day)
 
             weaponSection(day: day)

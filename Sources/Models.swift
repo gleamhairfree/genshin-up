@@ -218,11 +218,13 @@ struct AppData: Codable {
     var reminderMode: String = "all"
     var reminderCharacterIDs: [String] = []
     var weapons: [TrackedWeapon] = []
+    var plannerDailyResin: Int = 180
+    var plannerLeyLines: Bool = true
 
     init() {}
 
     enum CodingKeys: String, CodingKey {
-        case server, characters, goals, tasks, customBooks, wish, lastDailyKey, lastWeeklyKey, bookOrder, groupOrder, collapsedGroups, plans, accent, appearance, domainReminders, reminderMode, reminderCharacterIDs, weapons
+        case server, characters, goals, tasks, customBooks, wish, lastDailyKey, lastWeeklyKey, bookOrder, groupOrder, collapsedGroups, plans, accent, appearance, domainReminders, reminderMode, reminderCharacterIDs, weapons, plannerDailyResin, plannerLeyLines
     }
 
     init(from decoder: Decoder) throws {
@@ -245,6 +247,8 @@ struct AppData: Codable {
         reminderMode = try c.decodeIfPresent(String.self, forKey: .reminderMode) ?? "all"
         reminderCharacterIDs = try c.decodeIfPresent([String].self, forKey: .reminderCharacterIDs) ?? []
         weapons = (try? c.decodeIfPresent([TrackedWeapon].self, forKey: .weapons)) ?? []
+        plannerDailyResin = try c.decodeIfPresent(Int.self, forKey: .plannerDailyResin) ?? 180
+        plannerLeyLines = try c.decodeIfPresent(Bool.self, forKey: .plannerLeyLines) ?? true
     }
 
     static let defaultTasks: [TaskItem] = [
