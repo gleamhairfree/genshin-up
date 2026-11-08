@@ -1,16 +1,24 @@
 import SwiftUI
+import UserNotifications
 
 @main
 struct GenshinTrackerApp: App {
     @StateObject private var store = Store()
     @Environment(\.scenePhase) private var scenePhase
 
+    init() {
+        UNUserNotificationCenter.current().delegate = NotificationDelegate.shared
+    }
+
     var body: some Scene {
         WindowGroup {
             RootView()
                 .environmentObject(store)
                 .onChange(of: scenePhase) { phase in
-                    if phase == .active { store.refreshResets() }
+                    if phase == .active {
+                        store.refreshResets()
+                        store.rescheduleDomainReminders()
+                    }
                 }
         }
     }

@@ -213,11 +213,15 @@ struct AppData: Codable {
     var plans: [String: CharacterPlan] = [:]
     var accent: String = "gold"
     var appearance: String = "system"
+    var domainReminders: Bool = false
+    /// "all" = every tracked/planned/building character, "selected" = only notifyCharacterIDs.
+    var reminderMode: String = "all"
+    var reminderCharacterIDs: [String] = []
 
     init() {}
 
     enum CodingKeys: String, CodingKey {
-        case server, characters, goals, tasks, customBooks, wish, lastDailyKey, lastWeeklyKey, bookOrder, groupOrder, collapsedGroups, plans, accent, appearance
+        case server, characters, goals, tasks, customBooks, wish, lastDailyKey, lastWeeklyKey, bookOrder, groupOrder, collapsedGroups, plans, accent, appearance, domainReminders, reminderMode, reminderCharacterIDs
     }
 
     init(from decoder: Decoder) throws {
@@ -236,6 +240,9 @@ struct AppData: Codable {
         plans = (try? c.decodeIfPresent([String: CharacterPlan].self, forKey: .plans)) ?? [:]
         accent = try c.decodeIfPresent(String.self, forKey: .accent) ?? "gold"
         appearance = try c.decodeIfPresent(String.self, forKey: .appearance) ?? "system"
+        domainReminders = try c.decodeIfPresent(Bool.self, forKey: .domainReminders) ?? false
+        reminderMode = try c.decodeIfPresent(String.self, forKey: .reminderMode) ?? "all"
+        reminderCharacterIDs = try c.decodeIfPresent([String].self, forKey: .reminderCharacterIDs) ?? []
     }
 
     static let defaultTasks: [TaskItem] = [
@@ -319,6 +326,7 @@ final class Store: ObservableObject {
     func save() {
         guard let raw = try? Store.encoder.encode(data) else { return }
         try? raw.write(to: Store.fileURL, options: .atomic)
+        scheduleReminderRefresh()
     }
 
     // MARK: Resets

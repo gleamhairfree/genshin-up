@@ -50,6 +50,8 @@ struct MoreView: View {
                     Text("Currently: \(Theme.accents.first(where: { $0.id == store.data.accent })?.name ?? "Primogem Gold"). Changes buttons, toggles, progress bars and tab icons.")
                 }
 
+                DomainRemindersSection()
+
                 Section("Tools") {
                     NavigationLink { WishView() } label: { Label("Wish savings & pity", systemImage: "sparkles") }
                     NavigationLink { TaskManagerView() } label: { Label("Edit checklist tasks", systemImage: "list.bullet") }
