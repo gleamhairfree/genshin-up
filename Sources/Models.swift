@@ -217,11 +217,12 @@ struct AppData: Codable {
     /// "all" = every tracked/planned/building character, "selected" = only notifyCharacterIDs.
     var reminderMode: String = "all"
     var reminderCharacterIDs: [String] = []
+    var weapons: [TrackedWeapon] = []
 
     init() {}
 
     enum CodingKeys: String, CodingKey {
-        case server, characters, goals, tasks, customBooks, wish, lastDailyKey, lastWeeklyKey, bookOrder, groupOrder, collapsedGroups, plans, accent, appearance, domainReminders, reminderMode, reminderCharacterIDs
+        case server, characters, goals, tasks, customBooks, wish, lastDailyKey, lastWeeklyKey, bookOrder, groupOrder, collapsedGroups, plans, accent, appearance, domainReminders, reminderMode, reminderCharacterIDs, weapons
     }
 
     init(from decoder: Decoder) throws {
@@ -243,6 +244,7 @@ struct AppData: Codable {
         domainReminders = try c.decodeIfPresent(Bool.self, forKey: .domainReminders) ?? false
         reminderMode = try c.decodeIfPresent(String.self, forKey: .reminderMode) ?? "all"
         reminderCharacterIDs = try c.decodeIfPresent([String].self, forKey: .reminderCharacterIDs) ?? []
+        weapons = (try? c.decodeIfPresent([TrackedWeapon].self, forKey: .weapons)) ?? []
     }
 
     static let defaultTasks: [TaskItem] = [

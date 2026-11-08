@@ -55,6 +55,8 @@ struct TodayView: View {
 
             farmSection(day: day)
 
+            weaponSection(day: day)
+
             taskSection(.daily)
             taskSection(.weekly)
             taskSection(.once)
@@ -154,6 +156,36 @@ struct TodayView: View {
             Text("Farm today")
         } footer: {
             Text("★ = marked as currently building.")
+        }
+    }
+
+    @ViewBuilder
+    private func weaponSection(day: GameDay) -> some View {
+        // Planned weapons whose domain is open today and still need domain materials.
+        let planned = store.data.weapons.filter { w in
+            guard w.plan != nil, let info = w.info, let g = info.domainGroup, day.includes(g) else { return false }
+            let names = Set(info.phases.flatMap { $0.prefix(1).map { $0.name } })
+            let goals = store.data.goals.filter { $0.group == w.groupName && names.contains($0.name) }
+            return goals.isEmpty || goals.contains { !$0.isDone }
+        }
+        if !planned.isEmpty && !editMode.isEditing {
+            Section("Weapon materials today") {
+                ForEach(planned) { w in
+                    HStack(spacing: 10) {
+                        WeaponIcon(weaponID: w.weaponID, rarity: w.info?.rarity ?? 4, size: 36)
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(w.name).font(.subheadline.weight(.semibold))
+                            if let item = w.info?.domainItem {
+                                Text(item).font(.caption).foregroundColor(.secondary)
+                            }
+                        }
+                        Spacer()
+                        if let item = w.info?.domainItem {
+                            ItemIcon(name: item, size: 28)
+                        }
+                    }
+                }
+            }
         }
     }
 

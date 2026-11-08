@@ -82,6 +82,8 @@ extension Store {
         for g in data.goals where orders[g.group] == nil {
             if let c = byName[g.group] {
                 orders[g.group] = PlanCalculator.sortOrder(for: c, book: books.first(where: { $0.id == c.bookID }))
+            } else if let w = data.weapons.first(where: { $0.groupName == g.group }), let info = w.info {
+                orders[g.group] = WeaponCalculator.items(for: info, plan: WeaponCalculator.fullPlan(for: info)).map { $0.name }
             } else {
                 orders[g.group] = []
             }

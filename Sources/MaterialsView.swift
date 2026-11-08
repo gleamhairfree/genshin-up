@@ -7,6 +7,7 @@ struct MaterialsView: View {
     @State private var showReorder = false
     @State private var editing: MaterialGoal?
     @State private var planTarget: PlanTarget?
+    @State private var weaponPlanTarget: WeaponPlanTarget?
 
     private var groups: [String] { store.orderedGroups() }
 
@@ -56,6 +57,8 @@ struct MaterialsView: View {
                     } header: {
                         GroupHeader(group: group, goals: all, collapsed: collapsed) { id in
                             planTarget = PlanTarget(id: id)
+                        } onEditWeaponPlan: { id in
+                            weaponPlanTarget = WeaponPlanTarget(id: id)
                         }
                     }
                 }
@@ -94,6 +97,11 @@ struct MaterialsView: View {
                     PlanEditorView(characterID: target.id, showsCloseButton: true)
                 }
             }
+            .sheet(item: $weaponPlanTarget) { target in
+                NavigationStack {
+                    WeaponPlanEditor(weaponID: target.id, showsCloseButton: true)
+                }
+            }
         }
     }
 }
@@ -104,6 +112,7 @@ struct GroupHeader: View {
     let goals: [MaterialGoal]
     let collapsed: Bool
     let onEditPlan: (String) -> Void
+    var onEditWeaponPlan: (UUID) -> Void = { _ in }
 
     private var character: CharacterEntry? {
         store.data.characters.first(where: { $0.name == group })
@@ -118,15 +127,17 @@ struct GroupHeader: View {
                     Image(systemName: "chevron.right")
                         .font(.caption.weight(.bold))
                         .rotationEffect(.degrees(collapsed ? 0 : 90))
-                    if let c = character {
-                        CharacterIcon(character: c, size: 26)
-                    }
+                    GroupIcon(group: group, size: 26)
                     VStack(alignment: .leading, spacing: 0) {
                         Text(group.isEmpty ? "General" : group)
                             .font(.subheadline.weight(.semibold))
                             .foregroundColor(.primary)
                         if let p = store.plan(for: group) {
                             Text(planSummary(p))
+                                .font(.caption2)
+                                .foregroundColor(.secondary)
+                        } else if let w = store.weaponForGroup(group), let p = w.plan {
+                            Text("Weapon · Lv. \(p.currentLevel)→\(p.targetLevel)")
                                 .font(.caption2)
                                 .foregroundColor(.secondary)
                         }
@@ -147,6 +158,12 @@ struct GroupHeader: View {
                     } label: {
                         Label("Edit plan (level & talents)", systemImage: "slider.horizontal.3")
                     }
+                } else if let w = store.weaponForGroup(group) {
+                    Button {
+                        onEditWeaponPlan(w.id)
+                    } label: {
+                        Label("Edit weapon plan", systemImage: "slider.horizontal.3")
+                    }
                 }
                 Button("Mark all collected") {
                     for i in store.data.goals.indices where store.data.goals[i].group == group {
@@ -157,6 +174,7 @@ struct GroupHeader: View {
                     var d = store.data
                     d.goals.removeAll { $0.group == group }
                     d.plans[group] = nil
+                    if let i = d.weapons.firstIndex(where: { $0.groupName == group }) { d.weapons[i].plan = nil }
                     store.data = d
                 }
             } label: {
@@ -169,6 +187,10 @@ struct GroupHeader: View {
 
 struct PlanTarget: Identifiable {
     let id: String
+}
+
+struct WeaponPlanTarget: Identifiable {
+    let id: UUID
 }
 
 private func planSummary(_ p: CharacterPlan) -> String {
@@ -190,11 +212,7 @@ struct GroupReorderView: View {
                 Section {
                     ForEach(store.orderedGroups(), id: \.self) { group in
                         HStack(spacing: 10) {
-                            if let c = store.data.characters.first(where: { $0.name == group }) {
-                                CharacterIcon(character: c, size: 32)
-                            } else {
-                                Image(systemName: "shippingbox").frame(width: 32)
-                            }
+                            GroupIcon(group: group, size: 32)
                             Text(group.isEmpty ? "General" : group)
                         }
                     }

@@ -11,6 +11,8 @@ struct RosterView: View {
     @State private var filter: RosterFilter = .all
     @State private var element: String = "All"
     @State private var showAdd = false
+    @State private var showAddWeapon = false
+    @State private var tab = 0
 
     private var filtered: [CharacterEntry] {
         store.data.characters
@@ -32,6 +34,33 @@ struct RosterView: View {
 
     var body: some View {
         NavigationStack {
+            Group {
+                if tab == 0 { charactersList } else { WeaponsList(search: search) }
+            }
+            .searchable(text: $search, prompt: tab == 0 ? "Search characters" : "Search weapons")
+            .navigationTitle(tab == 0 ? "Roster" : "Weapons")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .principal) {
+                    Picker("Roster", selection: $tab) {
+                        Text("Characters").tag(0)
+                        Text("Weapons").tag(1)
+                    }
+                    .pickerStyle(.segmented)
+                    .frame(width: 220)
+                }
+                ToolbarItem(placement: .primaryAction) {
+                    Button {
+                        if tab == 0 { showAdd = true } else { showAddWeapon = true }
+                    } label: { Image(systemName: "plus") }
+                }
+            }
+            .sheet(isPresented: $showAdd) { AddCharacterView() }
+            .sheet(isPresented: $showAddWeapon) { AddWeaponView() }
+        }
+    }
+
+    private var charactersList: some View {
             List {
                 Section {
                     let owned = store.data.characters.filter { $0.owned }.count
@@ -67,15 +96,6 @@ struct RosterView: View {
                     Text("Swipe right on a character to quickly mark owned. Tap to edit level, constellation and talents.")
                 }
             }
-            .searchable(text: $search, prompt: "Search characters")
-            .navigationTitle("Roster")
-            .toolbar {
-                ToolbarItem(placement: .primaryAction) {
-                    Button { showAdd = true } label: { Image(systemName: "plus") }
-                }
-            }
-            .sheet(isPresented: $showAdd) { AddCharacterView() }
-        }
     }
 }
 

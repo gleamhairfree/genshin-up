@@ -129,531 +129,531 @@ enum MaterialData {
     Traveler|Brilliant Diamond Sliver:1;Windwheel Aster:168;Damaged Mask:18;Brilliant Diamond Fragment:9;Stained Mask:30;Brilliant Diamond Chunk:9;Ominous Mask:36;Brilliant Diamond Gemstone:6||
     """
 
-    /// Display name|paimon.moe item id
+    /// Display name|paimon.moe item id|numeric game id (fallback icon)
     static let itemsRaw = """
-    Mystic Enhancement Ore|mystic_enhancement_ore
-    Fine Enhancement Ore|fine_enhancement_ore
-    Enhancement Ore|enhancement_ore
-    1 Star Weapon|any_weapon_1
-    2 Star Weapon|any_weapon_2
-    3 Star Weapon|any_weapon_3
-    Mora|mora
-    Hero's Wit|heros_wit
-    Adventurer's Experience|adventurers_experience
-    Wanderer's Advice|wanderes_advice
-    Crown of Insight|crown_of_insight
-    Fetters of the Dandelion Gladiator|fetters_of_the_dandelion_gladiator
-    Chaos Device|chaos_device
-    Divining Scroll|divining_scroll
-    Chains of the Dandelion Gladiator|chains_of_the_dandelion_gladiator
-    Chaos Circuit|chaos_circuit
-    Sealed Scroll|sealed_scroll
-    Shackles of the Dandelion Gladiator|shackles_of_the_dandelion_gladiator
-    Chaos Core|chaos_core
-    Forbidden Curse Scroll|forbidden_curse_scroll
-    Dream of the Dandelion Gladiator|dream_of_the_dandelion_gladiator
-    Tile of Decarabian's Tower|tile_of_decarabians_tower
-    Heavy Horn|heavy_horn
-    Firm Arrowhead|firm_arrowhead
-    Debris of Decarabian's City|debris_of_decarabians_city
-    Black Bronze Horn|black_bronze_horn
-    Sharp Arrowhead|sharp_arrowhead
-    Fragment of Decarabian's Epic|fragment_of_decarabians_epic
-    Black Crystal Horn|black_crystal_horn
-    Weathered Arrowhead|weathered_arrowhead
-    Scattered Piece of Decarabian's Dream|scattered_piece_of_decarabians_dream
-    Slime Condensate|slime_condensate
-    Slime Secretions|slime_secretions
-    Slime Concentrate|slime_concentrate
-    Boreal Wolf's Milk Tooth|boreal_wolfs_milk_tooth
-    Dead Ley Line Branch|dead_ley_line_branch
-    Boreal Wolf's Cracked Tooth|boreal_wolfs_cracked_tooth
-    Dead Ley Line Leaves|dead_ley_line_leaves
-    Boreal Wolf's Broken Fang|boreal_wolfs_broken_fang
-    Ley Line Sprouts|ley_line_sprouts
-    Boreal Wolf's Nostalgia|boreal_wolfs_nostalgia
-    Grain of Aerosiderite|grain_of_aerosiderite
-    Fragile Bone Shard|fragile_bone_shard
-    Damaged Mask|damaged_mask
-    Piece of Aerosiderite|piece_of_aerosiderite
-    Sturdy Bone Shard|sturdy_bone_shard
-    Stained Mask|stained_mask
-    Bit of Aerosiderite|bit_of_aerosiderite
-    Fossilized Bone Shard|fossilized_bone_shard
-    Ominous Mask|ominous_mask
-    Chunk of Aerosiderite|chunk_of_aerosiderite
-    Mist Veiled Lead Elixir|mist_veiled_lead_elixir
-    Mist Grass Pollen|mist_grass_pollen
-    Treasure Hoarder Insignia|treasure_hoarder_insignia
-    Mist Veiled Mercury Elixir|mist_veiled_mercury_elixir
-    Mist Grass|mist_grass
-    Silver Raven Insignia|silver_raven_insignia
-    Mist Veiled Gold Elixir|mist_veiled_gold_elixir
-    Mist Grass Wick|mist_grass_wick
-    Golden Raven Insignia|golden_raven_insignia
-    Mist Veiled Primo Elixir|mist_veiled_primo_elixir
-    Luminous Sands from Guyun|luminous_sands_from_guyun
-    Hunter's Sacrificial Knife|hunters_sacrificial_knife
-    Recruit's Insignia|recruits_insignia
-    Lustrous Stone from Guyun|lustrous_stone_from_guyun
-    Agent's Sacrificial Knife|agents_sacrificial_knife
-    Sergeant's Insignia|sergeants_insignia
-    Relic from Guyun|relic_from_guyun
-    Inspector's Sacrificial Knife|inspectors_sacrificial_knife
-    Lieutenant's Insignia|lieutenants_insignia
-    Divine Body from Guyun|divine_body_from_guyun
-    Whopperflower Nectar|whopperflower_nectar
-    Shimmering Nectar|shimmering_nectar
-    Energy Nectar|energy_nectar
-    Prithiva Topaz Sliver|prithiva_topaz_sliver
-    Cecilia|cecilia
-    Prithiva Topaz Fragment|prithiva_topaz_fragment
-    Basalt Pillar|basalt_pillar
-    Prithiva Topaz Chunk|prithiva_topaz_chunk
-    Prithiva Topaz Gemstone|prithiva_topaz_gemstone
-    Teachings of Ballad|teachings_of_ballad
-    Guide to Ballad|guide_to_ballad
-    Philosophies of Ballad|philosophies_of_ballad
-    Tusk of Monoceros Caeli|tusk_of_monoceros_caeli
-    Agnidus Agate Sliver|agnidus_agate_sliver
-    Small Lamp Grass|small_lamp_grass
-    Agnidus Agate Fragment|agnidus_agate_fragment
-    Everflame Seed|everflame_seed
-    Agnidus Agate Chunk|agnidus_agate_chunk
-    Agnidus Agate Gemstone|agnidus_agate_gemstone
-    Teachings of Freedom|teachings_of_freedom
-    Guide to Freedom|guide_to_freedom
-    Philosophies of Freedom|philosophies_of_freedom
-    Dvalin's Sigh|dvalins_sigh
-    Varunada Lazurite Sliver|varunada_lazurite_sliver
-    Philanemo Mushroom|philanemo_mushroom
-    Varunada Lazurite Fragment|varunada_lazurite_fragment
-    Cleansing Heart|cleansing_heart
-    Varunada Lazurite Chunk|varunada_lazurite_chunk
-    Varunada Lazurite Gemstone|varunada_lazurite_gemstone
-    Ring of Boreas|ring_of_boreas
-    Vajrada Amethyst Sliver|vajrada_amethyst_sliver
-    Noctilucous Jade|noctilucous_jade
-    Vajrada Amethyst Fragment|vajrada_amethyst_fragment
-    Lightning Prism|lightning_prism
-    Vajrada Amethyst Chunk|vajrada_amethyst_chunk
-    Vajrada Amethyst Gemstone|vajrada_amethyst_gemstone
-    Teachings of Gold|teachings_of_gold
-    Guide to Gold|guide_to_gold
-    Philosophies of Gold|philosophies_of_gold
-    Windwheel Aster|windwheel_aster
-    Teachings of Resistance|teachings_of_resistance
-    Guide to Resistance|guide_to_resistance
-    Philosophies of Resistance|philosophies_of_resistance
-    Dvalin's Plume|dvalins_plume
-    Shivada Jade Sliver|shivada_jade_sliver
-    Cor Lapis|cor_lapis
-    Shivada Jade Fragment|shivada_jade_fragment
-    Hoarfrost Core|hoarfrost_core
-    Shivada Jade Chunk|shivada_jade_chunk
-    Shivada Jade Gemstone|shivada_jade_gemstone
-    Teachings of Diligence|teachings_of_diligence
-    Guide to Diligence|guide_to_diligence
-    Philosophies of Diligence|philosophies_of_diligence
-    Calla Lily|calla_lily
-    Shard of a Foul Legacy|shard_of_a_foul_legacy
-    Spirit Locket of Boreas|spirit_locket_of_boreas
-    Vayuda Turquoise Sliver|vayuda_turquoise_sliver
-    Dandelion Seed|dandelion_seed
-    Vayuda Turquoise Fragment|vayuda_turquoise_fragment
-    Hurricane Seed|hurricane_seed
-    Vayuda Turquoise Chunk|vayuda_turquoise_chunk
-    Vayuda Turquoise Gemstone|vayuda_turquoise_gemstone
-    Teachings of Prosperity|teachings_of_prosperity
-    Guide to Prosperity|guide_to_prosperity
-    Philosophies of Prosperity|philosophies_of_prosperity
-    Valberry|valberry
-    Dvalin's Claw|dvalins_claw
-    Glaze Lily|glaze_lily
-    Violetgrass|violetgrass
-    Tail of Boreas|tail_of_boreas
-    Wolfhook|wolfhook
-    Starconch|starconch
-    Brilliant Diamond Sliver|brilliant_diamond_sliver
-    Brilliant Diamond Fragment|brilliant_diamond_fragment
-    Brilliant Diamond Chunk|brilliant_diamond_chunk
-    Brilliant Diamond Gemstone|brilliant_diamond_gemstone
-    Jueyun Chili|jueyun_chili
-    Silk Flower|silk_flower
-    Qingxin|qingxin
-    Shadow of the Warrior|shadow_of_the_warrior
-    Juvenile Jade|juvenile_jade
-    Bloodjade Branch|bloodjade_branch
-    Crystalline Bloom|crystalline_bloom
-    Dragon Lord's Crown|dragon_lords_crown
-    Sea Ganoderma|sea_ganoderma
-    Marionette Core|marionette_core
-    Gilded Scale|gilded_scale
-    Coral Branch of a Distant Sea|coral_branch_of_a_distant_sea
-    Jeweled Branch of a Distant Sea|jeweled_branch_of_a_distant_sea
-    Jade Branch of a Distant Sea|jade_branch_of_a_distant_sea
-    Golden Branch of a Golden Sea|golden_branch_of_a_distant_sea
-    Narukami's Wisdom|narukamis_wisdom
-    Narukami's Joy|narukamis_joy
-    Narukami's Affection|narukamis_affection
-    Narukami's Valor|narukamis_valor
-    Mask of the Wicked Lieutenant|mask_of_the_wicked_lieutenant
-    Mask of the Tiger's Bite|mask_of_the_tigers_bite
-    Mask of the One-Horned|mask_of_the_one_horned
-    Mask of the Kijin|mask_of_the_kijin
-    Teachings of Transience|teachings_of_transience
-    Guide to Transience|guide_to_transience
-    Philosophies of Transience|philosophies_of_transience
-    Teachings of Elegance|teachings_of_elegance
-    Guide to Elegance|guide_to_elegance
-    Philosophies of Elegance|philosophies_of_elegance
-    Teachings of Light|teachings_of_light
-    Guide to Light|guide_to_light
-    Philosophies of Light|philosophies_of_light
-    Perpetual Heart|perpetual_heart
-    Smoldering Pearl|smoldering_pearl
-    Old Handguard|old_handguard
-    Kageuchi Handguard|kageuchi_handguard
-    Famed Handguard|famed_handguard
-    Chaos Gear|chaos_gear
-    Chaos Axis|chaos_axis
-    Chaos Oculus|chaos_oculus
-    Dismal Prism|dismal_prism
-    Crystal Prism|crystal_prism
-    Polarizing Prism|polarizing_prism
-    Sakura Bloom|sakura_bloom
-    Crystal Marrow|crystal_marrow
-    Dendrobium|dendrobium
-    Naku Weed|naku_weed
-    Okinabuto|okinabuto
-    Amakumo Fruit|amakumo_fruit
-    Storm Beads|storm_beads
-    Molten Moment|molten_moment
-    Ashen Heart|ashen_heart
-    Spectral Husk|spectral_husk
-    Spectral Heart|spectral_heart
-    Spectral Nucleus|spectral_nucleus
-    Sango Pearl|sango_pearl
-    Dew of Repudiation|dew_of_repudiation
-    Hellfire Butterfly|hellfire_butterfly
-    Concealed Claw|concealed_claw
-    Concealed Unguis|concealed_unguis
-    Concealed Talon|concealed_talon
-    Fluorescent Fungus|fluorescent_fungus
-    Onikabuto|onikabuto
-    Riftborn Regalia|riftborn_regalia
-    Dragonheir's False Fin|dragonheirs_false_fin
-    The Meaning of Aeons|the_meaning_of_aeons
-    Mudra of the Malefic General|mudra_of_the_malefic_general
-    Gloomy Statuette|gloomy_statuette
-    Dark Statuette|dark_statuette
-    Deathly Statuette|deathly_statuette
-    Tears of the Calamitous God|tears_of_the_calamitous_god
-    Runic Fang|runic_fang
-    Teachings of Admonition|teachings_of_admonition
-    Guide to Admonition|guide_to_admonition
-    Philosophies of Admonition|philosophies_of_admonition
-    Teachings of Ingenuity|teachings_of_ingenuity
-    Guide to Ingenuity|guide_to_ingenuity
-    Philosophies of Ingenuity|philosophies_of_ingenuity
-    Teachings of Praxis|teachings_of_praxis
-    Guide to Praxis|guide_to_praxis
-    Philosophies of Praxis|philosophies_of_praxis
-    Nagadus Emerald Sliver|nagadus_emerald_sliver
-    Nagadus Emerald Fragment|nagadus_emerald_fragment
-    Nagadus Emerald Chunk|nagadus_emerald_chunk
-    Nagadus Emerald Gemstone|nagadus_emerald_gemstone
-    Majestic Hooked Beak|majestic_hooked_beak
-    Nilotpala Lotus|nilotpala_lotus
-    Kalpalata Lotus|kalpalata_lotus
-    Fungal Spores|fungal_spores
-    Luminescent Pollen|luminescent_pollen
-    Crystalline Cyst Dust|crystalline_cyst_dust
-    Rukkhashava Mushrooms|rukkhashava_mushrooms
-    Echo of Scorching Might|echo_of_scorching_might
-    Remnant Glow of Scorching Might|remnant_glow_of_scorching_might
-    Dream of Scorching Might|dream_of_scorching_might
-    Olden Days of Scorching Might|olden_days_of_scorching_might
-    Inactivated Fungal Nucleus|inactivated_fungal_nucleus
-    Dormant Fungal Nucleus|dormant_fungal_nucleus
-    Robust Fungal Nucleus|robust_fungal_nucleus
-    Faded Red Satin|faded_red_satin
-    Trimmed Red Silk|trimmed_red_silk
-    Rich Red Brocade|rich_red_brocade
-    Copper Talisman of the Forest Dew|copper_talisman_of_the_forest_dew
-    Iron Talisman of the Forest Dew|iron_talisman_of_the_forest_dew
-    Silver Talisman of the Forest Dew|silver_talisman_of_the_forest_dew
-    Golden Talisman of the Forest Dew|golden_talisman_of_the_forest_dew
-    Chaos Storage|chaos_storage
-    Chaos Module|chaos_module
-    Chaos Bolt|chaos_bolt
-    Oasis Garden's Reminiscence|oasis_gardens_reminiscence
-    Oasis Garden's Kindness|oasis_gardens_kindness
-    Oasis Garden's Mourning|oasis_gardens_mourning
-    Oasis Garden's Truth|oasis_gardens_truth
-    Thunderclap Fruitcore|thunderclap_fruitcore
-    Scarab|scarab
-    Henna Berry|henna_berry
-    Light Guiding Tetrahedron|light_guiding_tetrahedron
-    Damaged Prism|damaged_prism
-    Turbid Prism|turbid_prism
-    Radiant Prism|radiant_prism
-    Perpetual Caliber|perpetual_caliber
-    Padisarah|padisarah
-    Quelled Creeper|quelled_creeper
-    Puppet Strings|puppet_strings
-    Mirror of Mushin|mirror_of_mushin
-    Daka's Bell|dakas_bell
-    Pseudo-Stamens|pseudo_stamens
-    Sand Grease Pupa|sand_grease_pupa
-    Desiccated Shell|desiccated_shell
-    Sturdy Shell|sturdy_shell
-    Marked Shell|marked_shell
-    Mourning Flower|mourning_flower
-    Evergloom Ring|evergloom_ring
-    Worldspan Fern|worldspan_fern
-    Primordial Greenbloom|primordial_greenbloom
-    A Flower Yet to Bloom|a_flower_yet_to_bloom
-    Treasured Flower|treasured_flower
-    Wanderer's Blooming Flower|wanderers_blooming_flower
-    Everamber|everamber
-    Artificed Spare Clockwork Component — Coppelius|artificed_spare_clockwork_component_coppelius
-    Lumidouce Bell|lumidouce_bell
-    Mechanical Spur Gear|mechanical_spur_gear
-    Artificed Dynamic Gear|artificed_dynamic_gear
-    Meshing Gear|meshing_gear
-    Rainbow Rose|rainbow_rose
-    Emperor's Resolution|emperors_resolution
-    Teachings of Order|teachings_of_order
-    Guide to Order|guide_to_order
-    Philosophies of Order|philosophies_of_order
-    Teachings of Equity|teachings_of_equity
-    Guide to Equity|guide_to_equity
-    Philosophies of Equity|philosophies_of_equity
-    Teachings of Justice|teachings_of_justice
-    Guide to Justice|guide_to_justice
-    Philosophies of Justice|philosophies_of_justice
-    Fragment of an Ancient Chord|fragment_of_an_ancient_chord
-    Chapter of an Ancient Chord|chapter_of_an_ancient_chord
-    Movement of an Ancient Chord|movement_of_an_ancient_chord
-    Echo of an Ancient Chord|echo_of_an_ancient_chord
-    Transoceanic Pearl|transoceanic_pearl
-    Transoceanic Chunk|transoceanic_chunk
-    Xenochromatic Crystal|xenochromatic_crystal
-    Drop of Tainted Water|drop_of_tainted_water
-    Scoop of Tainted Water|scoop_of_tainted_water
-    Newborn Tainted Hydro Phantasm|newborn_tainted_hydro_phantasm
-    Broken Goblet of the Pristine Sea|broken_goblet_of_the_pristine_sea
-    Wine Goblet of the Pristine Sea|wine_goblet_of_the_pristine_sea
-    Silver Goblet of the Pristine Sea|silver_goblet_of_the_pristine_sea
-    Golden Goblet of the Pristine Sea|golden_goblet_of_the_pristine_sea
-    Dross of Pure Sacred Dewdrop|dross_of_pure_sacred_dewdrop
-    Sublimation of Pure Sacred Dewdrop|sublimation_of_pure_sacred_dewdrop
-    Spring of Pure Sacred Dewdrop|spring_of_pure_sacred_dewdrop
-    Essence of Pure Sacred Dewdrop|essence_of_pure_sacred_dewdrop
-    Rift Core|rift_core
-    Foreign Synapse|foreign_synapse
-    Alien Life Core|alien_life_core
-    Romaritime Flower|romaritime_flower
-    Fontemer Unihorn|fontemer_unihorn
-    Lumitoile|lumitoile
-    Old Operative's Pocket Watch|old_operatives_pocket_watch
-    Operative's Standard Pocket Watch|operatives_standard_pocket_watch
-    Operative's Constancy|operatives_constancy
-    Subdetection Unit|subdetection_unit
-    "Tourbillon Device"|tourbillon_device
-    Beryl Conch|beryl_conch
-    Lakelight Lily|lakelight_lily
-    Water That Failed To Transcend|water_that_failed_to_transcend
-    Lightless Silk String|lightless_silk_string
-    Lightless Mass|lightless_mass
-    Spring of the First Dewdrop|spring_of_the_first_dewdrop
-    Lightless Eye of the Maelstrom|lightless_eye_of_the_maelstrom
-    Cloudseam Scale|cloudseam_scale
-    Clearwater Jade|clearwater_jade
-    Feathery Fin|feathery_fin
-    Lunar Fin|lunar_fin
-    Chasmlight Fin|chasmlight_fin
-    Fragment of a Golden Melody|fragment_of_a_golden_melody
-    Fading Candle|fading_candle
-    Ruined Hilt|ruined_hilt
-    Splintered Hilt|splintered_hilt
-    Still-Smoldering Hilt|still_smoldering_hilt
-    Trishiraite|trishiraite
-    Silken Feather|silken_feather
-    Sprayfeather Gill|sprayfeather_gill
-    Seasoned Fang|seasoned_fang
-    Tyrant's Fang|tyrants_fang
-    Juvenile Fang|juvenile_fang
-    Mark of the Binding Blessing|mark_of_the_binding_blessing
-    Warrior's Metal Whistle|warriors_metal_whistle
-    Saurian-Crowned Warrior's Golden Whistle|saurian_crowned_warriors_golden_whistle
-    Sentry's Wooden Whistle|sentrys_wooden_whistle
-    Overripe Flamegranate|overripe_flamegranate
-    Quenepa Berry|quenepa_berry
-    Teachings of Contention|teachings_of_contention
-    Guide to Contention|guide_to_contention
-    Philosophies of Contention|philosophies_of_contention
-    Teachings of Conflict|teachings_of_conflict
-    Guide to Conflict|guide_to_conflict
-    Philosophies of Conflict|philosophies_of_conflict
-    Blazing Sacrificial Heart's Terror|blazing_sacrificial_hearts_terror
-    Blazing Sacrificial Heart's Hesitance|blazing_sacrificial_hearts_hesitance
-    Blazing Sacrificial Heart's Resolve|blazing_sacrificial_hearts_resolve
-    Blazing Sacrificial Heart's Splendor|blazing_sacrificial_hearts_splendor
-    Shard of a Shattered Will|shard_of_a_shattered_will
-    Locus of a Clear Will|locus_of_a_clear_will
-    Sigil of a Striding Will|sigil_of_a_striding_will
-    Night-Wind's Mystic Consideration|night_winds_mystic_consideration
-    Night-Wind's Mystic Premonition|night_winds_mystic_premonition
-    Night-Wind's Mystic Augury|night_winds_mystic_augury
-    Night-Wind's Mystic Revelation|night_winds_mystic_revelation
-    Axis of the Secret Source|axis_of_the_secret_source
-    Sheath of the Secret Source|sheath_of_the_secret_source
-    Heart of the Secret Source|heart_of_the_secret_source
-    Ignited Stone|ignited_stone
-    Ignited Seed of Life|ignited_seed_of_life
-    Ignited Seeing Eye|ignited_seeing_eye
-    Delirious Decadence of the Sacred Lord|delirious_decadence_of_the_sacred_lord
-    Delirious Desolation of the Sacred Lord|delirious_desolation_of_the_sacred_lord
-    Delirious Demeanor of the Sacred Lord|delirious_demeanor_of_the_sacred_lord
-    Delirious Divinity of the Sacred Lord|delirious_divinity_of_the_sacred_lord
-    Saurian Claw Succulent|saurian_claw_succulent
-    Denial and Judgment|denial_and_judgment
-    Teachings of Kindling|teachings_of_kindling
-    Guide to Kindling|guide_to_kindling
-    Philosophies of Kindling|philosophies_of_kindling
-    Gold-Inscribed Secret Source Core|gold_inscribed_secret_source_core
-    Brilliant Chrysanthemum|brilliant_chrysanthemum
-    Ensnaring Gaze|ensnaring_gaze
-    Withering Purpurbloom|withering_purpurbloom
-    Glowing Hornshroom|glowing_hornshroom
-    Refractive Bud|refractive_bud
-    Bewildering Broadleaf|bewildering_broadleaf
-    Illusory Leafcoil|illusory_leafcoil
-    Eroded Horn|eroded_horn
-    Talisman of the Enigmatic Land|talisman_of_the_enigmatic_land
-    Eroded Sunfire|eroded_sunfire
-    Dracolite|dracolite
-    Sparkless Statue Core|sparkless_statue_core
-    Skysplit Gembloom|skysplit_gembloom
-    Eroded Scale-Feather|eroded_scale_feather
-    Cold-Cracked Shellshard|cold_cracked_shellshard
-    Warm Back-Shell|warm_back_shell
-    Blazing Prismshell|blazing_prismshell
-    Secret Source Airflow Accumulator|secret_source_airflow_accumulator
-    Ascended Sample: Rook|ascended_sample_rook
-    Ascended Sample: Knight|ascended_sample_knight
-    Tattered Warrant|tattered_warrant
-    Immaculate Warrant|immaculate_warrant
-    Frost-Etched Warrant|frost_etched_warrant
-    Moonfall Silver|moonfall_silver
-    Lightbearing Scale-Feather|lightbearing_scale_feather
-    Teachings of Moonlight|teachings_of_moonlight
-    Guide to Moonlight|guide_to_moonlight
-    Philosophies of Moonlight|philosophies_of_moonlight
-    Lightless Bone|lightless_bone
-    Glowing Remains|glowing_remains
-    Radiant Exoskeleton|radiant_exoskeleton
-    Artful Device Fragment|artful_device_fragment
-    Frostnight's Glimmer|frostnights_glimmer
-    Broken Drive Shaft|broken_drive_shaft
-    Artful Device Replica|artful_device_replica
-    Frostnight's Glow|frostnights_glow
-    Reinforced Drive Shaft|reinforced_drive_shaft
-    Artful Device Inheritance|artful_device_inheritance
-    Frostnight's Glory|frostnights_glory
-    Precision Drive Shaft|precision_drive_shaft
-    Artful Device Wish|artful_device_wish
-    Precision Kuuvahki Stamping Die|precision_kuuvahki_stamping_die
-    Frostlamp Flower|frostlamp_flower
-    Teachings of Elysium|teachings_of_elysium
-    Guide to Elysium|guide_to_elysium
-    Philosophies of Elysium|philosophies_of_elysium
-    Teachings of Vagrancy|teachings_of_vagrancy
-    Guide to Vagrancy|guide_to_vagrancy
-    Philosophies of Vagrancy|philosophies_of_vagrancy
-    Ascended Sample: Queen|ascended_sample_queen
-    Portable Bearing|portable_bearing
-    Ember of Long Night Flint|ember_of_long_night_flint
-    Mistshroud Manifestation|mistshroud_manifestation
-    Afterglow of Long Night Flint|afterglow_of_long_night_flint
-    Mistshroud Plate|mistshroud_plate
-    Flare of Long Night Flint|flare_of_long_night_flint
-    Mistshroud Helmet|mistshroud_helmet
-    Blaze of Long Night Flint|blaze_of_long_night_flint
-    Radiant Antler|radiant_antler
-    Cyclic Military Kuuvahki Core|cyclic_military_kuuvahki_core
-    Winter Icelea|winter_icelea
-    Mask of the Virtuous Doctor|mask_of_the_virtuous_doctor
-    Remnant of the Dreadwing|remnant_of_the_dreadwing
-    Pine Amber|pine_amber
-    Fractured Eye of the Deep Shadow|fractured_eye_of_the_deep_shadow
-    Aberrant Core of the Deep Shadow|aberrant_core_of_the_deep_shadow
-    Hooked Beak of the Deep Shadow|hooked_beak_of_the_deep_shadow
-    Prismatic Severed Tail|prismatic_severed_tail
-    Elixir of the Heretic|elixir_of_the_heretic
-    Etherwing Moth|etherwing_moth
-    Plume of the Fallen Watcher|plume_of_the_fallen_watcher
-    Faded Flaming Hilt|faded_flaming_hilt
-    Fractured Flaming Hilt|fractured_flaming_hilt
-    Jeweled Flaming Hilt|jeweled_flaming_hilt
-    Counterfeit Resin|counterfeit_resin
-    The Cornerstone of Stars and Flames|the_cornerstone_of_stars_and_flames
-    Madman's Restraint|madmans_restraint
-    Sundered Glory of the Far-North Scions|sundered_glory_of_the_far_north_scions
-    Unyielding Delusion of the Far-North Scions|unyielding_delusion_of_the_far_north_scions
-    Oblation of the Far-North Scions|oblation_of_the_far_north_scions
-    Aureate Radiance of the Far-North Scions|aureate_radiance_of_the_far_north_scions
-    Fractured Lunar Iron|fractured_lunar_iron
-    Depleted Lunar Iron|depleted_lunar_iron
-    Unblemished Lunar Iron|unblemished_lunar_iron
-    Flockingweed|flockingweed
-    Symbiotic Chimeric Nucleus|symbiotic_chimeric_nucleus
-    Prime Chimeric Nexus|prime_chimeric_nexus
-    Chimeric Core|chimeric_core
-    Frostfairy Flower|frostfairy_flower
-    Severed Tail of the Sky-Roamer|severed_tail_of_the_sky_roamer
-    Unscorched Blossom Branch|unscorched_blossom_branch
-    Ethereal Crystal|ethereal_crystal
-    Ethereal Crystalscale Stone|ethereal_crystalscale_stone
-    Ethereal Glimmershard|ethereal_glimmershard
-    Twisted Withered Branch|twisted_withered_branch
-    Teachings of Charity|teachings_of_charity
-    Guide to Charity|guide_to_charity
-    Philosophies of Charity|philosophies_of_charity
-    Teachings of Fortitude|teachings_of_fortitude
-    Guide to Fortitude|guide_to_fortitude
-    Philosophies of Fortitude|philosophies_of_fortitude
-    Rise of the Pale Star Army|rise_of_the_pale_star_army
-    Muster of the Pale Star Army|muster_of_the_pale_star_army
-    Clarion of the Pale Star Army|clarion_of_the_pale_star_army
-    Triumph of the Pale Star Army|triumph_of_the_pale_star_army
-    Hollow Root of Life|hollow_root_of_life
-    Sprout Node of Life|sprout_node_of_life
-    Coiled Core of Life|coiled_core_of_life
-    Accreted Fragment|accreted_fragment
-    Accreted Mass|accreted_mass
-    Accreted Growth|accreted_growth
-    The Frost Emperor's Revival|the_frost_emperors_revival
-    The Frost Emperor's Ceremony|the_frost_emperors_ceremony
-    The Frost Emperor's Lament|the_frost_emperors_lament
-    The Frost Emperor's Farewell|the_frost_emperors_farewell
-    Measured Pour of the Cellared Spiritual Nectar|measured_pour_of_the_cellared_spiritual_nectar
-    Intoxication of the Cellared Spiritual Nectar|intoxication_of_the_cellared_spiritual_nectar
-    Exhilaration of the Cellared Spiritual Nectar|exhilaration_of_the_cellared_spiritual_nectar
-    Revelry of the Cellared Spiritual Nectar|revelry_of_the_cellared_spiritual_nectar
-    Teachings of Glory|teachings_of_glory
-    Guide to Glory|guide_to_glory
-    Philosophies of Glory|philosophies_of_glory
-    Profaned Sprout|profaned_sprout
-    Golden Fern|golden_fern
-    Vagabond's Cracked Armor|vagabonds_cracked_armor
-    Kristallfold|kristallfold
-    Shattered Stability Anchor|shattered_stability_anchor
-    Fairy Wormwood|fairy_wormwood
-    Snowborn Heartshard|snowborn_heartshard
-    Snowborn Mirrorheart|snowborn_mirrorheart
-    Snowborn Heart of Ignorance|snowborn_heart_of_ignorance
+    Mystic Enhancement Ore|mystic_enhancement_ore|104013
+    Fine Enhancement Ore|fine_enhancement_ore|104012
+    Enhancement Ore|enhancement_ore|104011
+    1 Star Weapon|any_weapon_1|
+    2 Star Weapon|any_weapon_2|
+    3 Star Weapon|any_weapon_3|
+    Mora|mora|202
+    Hero's Wit|heros_wit|104003
+    Adventurer's Experience|adventurers_experience|104002
+    Wanderer's Advice|wanderes_advice|104001
+    Crown of Insight|crown_of_insight|104319
+    Fetters of the Dandelion Gladiator|fetters_of_the_dandelion_gladiator|114009
+    Chaos Device|chaos_device|112023
+    Divining Scroll|divining_scroll|112008
+    Chains of the Dandelion Gladiator|chains_of_the_dandelion_gladiator|114010
+    Chaos Circuit|chaos_circuit|112024
+    Sealed Scroll|sealed_scroll|112009
+    Shackles of the Dandelion Gladiator|shackles_of_the_dandelion_gladiator|114011
+    Chaos Core|chaos_core|112025
+    Forbidden Curse Scroll|forbidden_curse_scroll|112010
+    Dream of the Dandelion Gladiator|dream_of_the_dandelion_gladiator|114012
+    Tile of Decarabian's Tower|tile_of_decarabians_tower|114001
+    Heavy Horn|heavy_horn|112014
+    Firm Arrowhead|firm_arrowhead|112011
+    Debris of Decarabian's City|debris_of_decarabians_city|114002
+    Black Bronze Horn|black_bronze_horn|112015
+    Sharp Arrowhead|sharp_arrowhead|112012
+    Fragment of Decarabian's Epic|fragment_of_decarabians_epic|114003
+    Black Crystal Horn|black_crystal_horn|112016
+    Weathered Arrowhead|weathered_arrowhead|112013
+    Scattered Piece of Decarabian's Dream|scattered_piece_of_decarabians_dream|114004
+    Slime Condensate|slime_condensate|112002
+    Slime Secretions|slime_secretions|112003
+    Slime Concentrate|slime_concentrate|112004
+    Boreal Wolf's Milk Tooth|boreal_wolfs_milk_tooth|114005
+    Dead Ley Line Branch|dead_ley_line_branch|112020
+    Boreal Wolf's Cracked Tooth|boreal_wolfs_cracked_tooth|114006
+    Dead Ley Line Leaves|dead_ley_line_leaves|112021
+    Boreal Wolf's Broken Fang|boreal_wolfs_broken_fang|114007
+    Ley Line Sprouts|ley_line_sprouts|
+    Boreal Wolf's Nostalgia|boreal_wolfs_nostalgia|114008
+    Grain of Aerosiderite|grain_of_aerosiderite|114021
+    Fragile Bone Shard|fragile_bone_shard|112041
+    Damaged Mask|damaged_mask|112005
+    Piece of Aerosiderite|piece_of_aerosiderite|114022
+    Sturdy Bone Shard|sturdy_bone_shard|112042
+    Stained Mask|stained_mask|112006
+    Bit of Aerosiderite|bit_of_aerosiderite|114023
+    Fossilized Bone Shard|fossilized_bone_shard|112043
+    Ominous Mask|ominous_mask|112007
+    Chunk of Aerosiderite|chunk_of_aerosiderite|114024
+    Mist Veiled Lead Elixir|mist_veiled_lead_elixir|114017
+    Mist Grass Pollen|mist_grass_pollen|112026
+    Treasure Hoarder Insignia|treasure_hoarder_insignia|112035
+    Mist Veiled Mercury Elixir|mist_veiled_mercury_elixir|114018
+    Mist Grass|mist_grass|112027
+    Silver Raven Insignia|silver_raven_insignia|112036
+    Mist Veiled Gold Elixir|mist_veiled_gold_elixir|114019
+    Mist Grass Wick|mist_grass_wick|112028
+    Golden Raven Insignia|golden_raven_insignia|112037
+    Mist Veiled Primo Elixir|mist_veiled_primo_elixir|114020
+    Luminous Sands from Guyun|luminous_sands_from_guyun|114013
+    Hunter's Sacrificial Knife|hunters_sacrificial_knife|112029
+    Recruit's Insignia|recruits_insignia|112032
+    Lustrous Stone from Guyun|lustrous_stone_from_guyun|114014
+    Agent's Sacrificial Knife|agents_sacrificial_knife|112030
+    Sergeant's Insignia|sergeants_insignia|112033
+    Relic from Guyun|relic_from_guyun|114015
+    Inspector's Sacrificial Knife|inspectors_sacrificial_knife|112031
+    Lieutenant's Insignia|lieutenants_insignia|112034
+    Divine Body from Guyun|divine_body_from_guyun|114016
+    Whopperflower Nectar|whopperflower_nectar|112038
+    Shimmering Nectar|shimmering_nectar|112039
+    Energy Nectar|energy_nectar|112040
+    Prithiva Topaz Sliver|prithiva_topaz_sliver|104171
+    Cecilia|cecilia|100023
+    Prithiva Topaz Fragment|prithiva_topaz_fragment|104172
+    Basalt Pillar|basalt_pillar|113009
+    Prithiva Topaz Chunk|prithiva_topaz_chunk|104173
+    Prithiva Topaz Gemstone|prithiva_topaz_gemstone|104174
+    Teachings of Ballad|teachings_of_ballad|104307
+    Guide to Ballad|guide_to_ballad|104308
+    Philosophies of Ballad|philosophies_of_ballad|104309
+    Tusk of Monoceros Caeli|tusk_of_monoceros_caeli|113013
+    Agnidus Agate Sliver|agnidus_agate_sliver|104111
+    Small Lamp Grass|small_lamp_grass|100055
+    Agnidus Agate Fragment|agnidus_agate_fragment|104112
+    Everflame Seed|everflame_seed|113011
+    Agnidus Agate Chunk|agnidus_agate_chunk|104113
+    Agnidus Agate Gemstone|agnidus_agate_gemstone|104114
+    Teachings of Freedom|teachings_of_freedom|104301
+    Guide to Freedom|guide_to_freedom|104302
+    Philosophies of Freedom|philosophies_of_freedom|104303
+    Dvalin's Sigh|dvalins_sigh|113005
+    Varunada Lazurite Sliver|varunada_lazurite_sliver|104121
+    Philanemo Mushroom|philanemo_mushroom|100025
+    Varunada Lazurite Fragment|varunada_lazurite_fragment|104122
+    Cleansing Heart|cleansing_heart|113012
+    Varunada Lazurite Chunk|varunada_lazurite_chunk|104123
+    Varunada Lazurite Gemstone|varunada_lazurite_gemstone|104124
+    Ring of Boreas|ring_of_boreas|113007
+    Vajrada Amethyst Sliver|vajrada_amethyst_sliver|104141
+    Noctilucous Jade|noctilucous_jade|100028
+    Vajrada Amethyst Fragment|vajrada_amethyst_fragment|104142
+    Lightning Prism|lightning_prism|113002
+    Vajrada Amethyst Chunk|vajrada_amethyst_chunk|104143
+    Vajrada Amethyst Gemstone|vajrada_amethyst_gemstone|104144
+    Teachings of Gold|teachings_of_gold|104316
+    Guide to Gold|guide_to_gold|104317
+    Philosophies of Gold|philosophies_of_gold|104318
+    Windwheel Aster|windwheel_aster|100024
+    Teachings of Resistance|teachings_of_resistance|104304
+    Guide to Resistance|guide_to_resistance|104305
+    Philosophies of Resistance|philosophies_of_resistance|104306
+    Dvalin's Plume|dvalins_plume|113003
+    Shivada Jade Sliver|shivada_jade_sliver|104161
+    Cor Lapis|cor_lapis|100058
+    Shivada Jade Fragment|shivada_jade_fragment|104162
+    Hoarfrost Core|hoarfrost_core|113010
+    Shivada Jade Chunk|shivada_jade_chunk|104163
+    Shivada Jade Gemstone|shivada_jade_gemstone|104164
+    Teachings of Diligence|teachings_of_diligence|104313
+    Guide to Diligence|guide_to_diligence|104314
+    Philosophies of Diligence|philosophies_of_diligence|104315
+    Calla Lily|calla_lily|100056
+    Shard of a Foul Legacy|shard_of_a_foul_legacy|113014
+    Spirit Locket of Boreas|spirit_locket_of_boreas|113008
+    Vayuda Turquoise Sliver|vayuda_turquoise_sliver|104151
+    Dandelion Seed|dandelion_seed|100057
+    Vayuda Turquoise Fragment|vayuda_turquoise_fragment|104152
+    Hurricane Seed|hurricane_seed|113001
+    Vayuda Turquoise Chunk|vayuda_turquoise_chunk|104153
+    Vayuda Turquoise Gemstone|vayuda_turquoise_gemstone|104154
+    Teachings of Prosperity|teachings_of_prosperity|104310
+    Guide to Prosperity|guide_to_prosperity|104311
+    Philosophies of Prosperity|philosophies_of_prosperity|104312
+    Valberry|valberry|100022
+    Dvalin's Claw|dvalins_claw|113004
+    Glaze Lily|glaze_lily|100030
+    Violetgrass|violetgrass|100034
+    Tail of Boreas|tail_of_boreas|113006
+    Wolfhook|wolfhook|100021
+    Starconch|starconch|100033
+    Brilliant Diamond Sliver|brilliant_diamond_sliver|104101
+    Brilliant Diamond Fragment|brilliant_diamond_fragment|104102
+    Brilliant Diamond Chunk|brilliant_diamond_chunk|104103
+    Brilliant Diamond Gemstone|brilliant_diamond_gemstone|104104
+    Jueyun Chili|jueyun_chili|100027
+    Silk Flower|silk_flower|100029
+    Qingxin|qingxin|100031
+    Shadow of the Warrior|shadow_of_the_warrior|113015
+    Juvenile Jade|juvenile_jade|113016
+    Bloodjade Branch|bloodjade_branch|113018
+    Crystalline Bloom|crystalline_bloom|113020
+    Dragon Lord's Crown|dragon_lords_crown|113017
+    Sea Ganoderma|sea_ganoderma|101206
+    Marionette Core|marionette_core|113022
+    Gilded Scale|gilded_scale|113019
+    Coral Branch of a Distant Sea|coral_branch_of_a_distant_sea|114025
+    Jeweled Branch of a Distant Sea|jeweled_branch_of_a_distant_sea|114026
+    Jade Branch of a Distant Sea|jade_branch_of_a_distant_sea|114027
+    Golden Branch of a Golden Sea|golden_branch_of_a_distant_sea|
+    Narukami's Wisdom|narukamis_wisdom|114029
+    Narukami's Joy|narukamis_joy|114030
+    Narukami's Affection|narukamis_affection|114031
+    Narukami's Valor|narukamis_valor|114032
+    Mask of the Wicked Lieutenant|mask_of_the_wicked_lieutenant|114033
+    Mask of the Tiger's Bite|mask_of_the_tigers_bite|114034
+    Mask of the One-Horned|mask_of_the_one_horned|114035
+    Mask of the Kijin|mask_of_the_kijin|114036
+    Teachings of Transience|teachings_of_transience|104320
+    Guide to Transience|guide_to_transience|104321
+    Philosophies of Transience|philosophies_of_transience|104322
+    Teachings of Elegance|teachings_of_elegance|104323
+    Guide to Elegance|guide_to_elegance|104324
+    Philosophies of Elegance|philosophies_of_elegance|104325
+    Teachings of Light|teachings_of_light|104326
+    Guide to Light|guide_to_light|104327
+    Philosophies of Light|philosophies_of_light|104328
+    Perpetual Heart|perpetual_heart|113023
+    Smoldering Pearl|smoldering_pearl|113024
+    Old Handguard|old_handguard|112044
+    Kageuchi Handguard|kageuchi_handguard|112045
+    Famed Handguard|famed_handguard|112046
+    Chaos Gear|chaos_gear|112047
+    Chaos Axis|chaos_axis|112048
+    Chaos Oculus|chaos_oculus|112049
+    Dismal Prism|dismal_prism|112050
+    Crystal Prism|crystal_prism|112051
+    Polarizing Prism|polarizing_prism|112052
+    Sakura Bloom|sakura_bloom|101202
+    Crystal Marrow|crystal_marrow|101203
+    Dendrobium|dendrobium|101204
+    Naku Weed|naku_weed|101205
+    Okinabuto|okinabuto|
+    Amakumo Fruit|amakumo_fruit|101208
+    Storm Beads|storm_beads|113029
+    Molten Moment|molten_moment|113025
+    Ashen Heart|ashen_heart|113027
+    Spectral Husk|spectral_husk|112053
+    Spectral Heart|spectral_heart|112054
+    Spectral Nucleus|spectral_nucleus|112055
+    Sango Pearl|sango_pearl|101207
+    Dew of Repudiation|dew_of_repudiation|113028
+    Hellfire Butterfly|hellfire_butterfly|113026
+    Concealed Claw|concealed_claw|112056
+    Concealed Unguis|concealed_unguis|112057
+    Concealed Talon|concealed_talon|112058
+    Fluorescent Fungus|fluorescent_fungus|101209
+    Onikabuto|onikabuto|101201
+    Riftborn Regalia|riftborn_regalia|113030
+    Dragonheir's False Fin|dragonheirs_false_fin|113031
+    The Meaning of Aeons|the_meaning_of_aeons|113034
+    Mudra of the Malefic General|mudra_of_the_malefic_general|113032
+    Gloomy Statuette|gloomy_statuette|112017
+    Dark Statuette|dark_statuette|112018
+    Deathly Statuette|deathly_statuette|112019
+    Tears of the Calamitous God|tears_of_the_calamitous_god|113033
+    Runic Fang|runic_fang|113035
+    Teachings of Admonition|teachings_of_admonition|104329
+    Guide to Admonition|guide_to_admonition|104330
+    Philosophies of Admonition|philosophies_of_admonition|104331
+    Teachings of Ingenuity|teachings_of_ingenuity|104332
+    Guide to Ingenuity|guide_to_ingenuity|104333
+    Philosophies of Ingenuity|philosophies_of_ingenuity|104334
+    Teachings of Praxis|teachings_of_praxis|104335
+    Guide to Praxis|guide_to_praxis|104336
+    Philosophies of Praxis|philosophies_of_praxis|104337
+    Nagadus Emerald Sliver|nagadus_emerald_sliver|104131
+    Nagadus Emerald Fragment|nagadus_emerald_fragment|104132
+    Nagadus Emerald Chunk|nagadus_emerald_chunk|104133
+    Nagadus Emerald Gemstone|nagadus_emerald_gemstone|104134
+    Majestic Hooked Beak|majestic_hooked_beak|113036
+    Nilotpala Lotus|nilotpala_lotus|101215
+    Kalpalata Lotus|kalpalata_lotus|101217
+    Fungal Spores|fungal_spores|112059
+    Luminescent Pollen|luminescent_pollen|112060
+    Crystalline Cyst Dust|crystalline_cyst_dust|112061
+    Rukkhashava Mushrooms|rukkhashava_mushrooms|101213
+    Echo of Scorching Might|echo_of_scorching_might|114045
+    Remnant Glow of Scorching Might|remnant_glow_of_scorching_might|114046
+    Dream of Scorching Might|dream_of_scorching_might|114047
+    Olden Days of Scorching Might|olden_days_of_scorching_might|114048
+    Inactivated Fungal Nucleus|inactivated_fungal_nucleus|112062
+    Dormant Fungal Nucleus|dormant_fungal_nucleus|112063
+    Robust Fungal Nucleus|robust_fungal_nucleus|112064
+    Faded Red Satin|faded_red_satin|112065
+    Trimmed Red Silk|trimmed_red_silk|112066
+    Rich Red Brocade|rich_red_brocade|112067
+    Copper Talisman of the Forest Dew|copper_talisman_of_the_forest_dew|114037
+    Iron Talisman of the Forest Dew|iron_talisman_of_the_forest_dew|114038
+    Silver Talisman of the Forest Dew|silver_talisman_of_the_forest_dew|114039
+    Golden Talisman of the Forest Dew|golden_talisman_of_the_forest_dew|114040
+    Chaos Storage|chaos_storage|112068
+    Chaos Module|chaos_module|112069
+    Chaos Bolt|chaos_bolt|112070
+    Oasis Garden's Reminiscence|oasis_gardens_reminiscence|114041
+    Oasis Garden's Kindness|oasis_gardens_kindness|114042
+    Oasis Garden's Mourning|oasis_gardens_mourning|114043
+    Oasis Garden's Truth|oasis_gardens_truth|114044
+    Thunderclap Fruitcore|thunderclap_fruitcore|113037
+    Scarab|scarab|101225
+    Henna Berry|henna_berry|101220
+    Light Guiding Tetrahedron|light_guiding_tetrahedron|113039
+    Damaged Prism|damaged_prism|112071
+    Turbid Prism|turbid_prism|112072
+    Radiant Prism|radiant_prism|112073
+    Perpetual Caliber|perpetual_caliber|113038
+    Padisarah|padisarah|101214
+    Quelled Creeper|quelled_creeper|113040
+    Puppet Strings|puppet_strings|113041
+    Mirror of Mushin|mirror_of_mushin|113042
+    Daka's Bell|dakas_bell|113043
+    Pseudo-Stamens|pseudo_stamens|113044
+    Sand Grease Pupa|sand_grease_pupa|101222
+    Desiccated Shell|desiccated_shell|112074
+    Sturdy Shell|sturdy_shell|112075
+    Marked Shell|marked_shell|112076
+    Mourning Flower|mourning_flower|101223
+    Evergloom Ring|evergloom_ring|113045
+    Worldspan Fern|worldspan_fern|113046
+    Primordial Greenbloom|primordial_greenbloom|113047
+    A Flower Yet to Bloom|a_flower_yet_to_bloom|112077
+    Treasured Flower|treasured_flower|112078
+    Wanderer's Blooming Flower|wanderers_blooming_flower|112079
+    Everamber|everamber|113048
+    Artificed Spare Clockwork Component — Coppelius|artificed_spare_clockwork_component_coppelius|113050
+    Lumidouce Bell|lumidouce_bell|101235
+    Mechanical Spur Gear|mechanical_spur_gear|112084
+    Artificed Dynamic Gear|artificed_dynamic_gear|112085
+    Meshing Gear|meshing_gear|112083
+    Rainbow Rose|rainbow_rose|101236
+    Emperor's Resolution|emperors_resolution|113051
+    Teachings of Order|teachings_of_order|104344
+    Guide to Order|guide_to_order|104345
+    Philosophies of Order|philosophies_of_order|104346
+    Teachings of Equity|teachings_of_equity|104338
+    Guide to Equity|guide_to_equity|104339
+    Philosophies of Equity|philosophies_of_equity|104340
+    Teachings of Justice|teachings_of_justice|104341
+    Guide to Justice|guide_to_justice|104342
+    Philosophies of Justice|philosophies_of_justice|104343
+    Fragment of an Ancient Chord|fragment_of_an_ancient_chord|114049
+    Chapter of an Ancient Chord|chapter_of_an_ancient_chord|114050
+    Movement of an Ancient Chord|movement_of_an_ancient_chord|114051
+    Echo of an Ancient Chord|echo_of_an_ancient_chord|114052
+    Transoceanic Pearl|transoceanic_pearl|112080
+    Transoceanic Chunk|transoceanic_chunk|112081
+    Xenochromatic Crystal|xenochromatic_crystal|112082
+    Drop of Tainted Water|drop_of_tainted_water|112086
+    Scoop of Tainted Water|scoop_of_tainted_water|112087
+    Newborn Tainted Hydro Phantasm|newborn_tainted_hydro_phantasm|112088
+    Broken Goblet of the Pristine Sea|broken_goblet_of_the_pristine_sea|114057
+    Wine Goblet of the Pristine Sea|wine_goblet_of_the_pristine_sea|114058
+    Silver Goblet of the Pristine Sea|silver_goblet_of_the_pristine_sea|114059
+    Golden Goblet of the Pristine Sea|golden_goblet_of_the_pristine_sea|114060
+    Dross of Pure Sacred Dewdrop|dross_of_pure_sacred_dewdrop|114053
+    Sublimation of Pure Sacred Dewdrop|sublimation_of_pure_sacred_dewdrop|114054
+    Spring of Pure Sacred Dewdrop|spring_of_pure_sacred_dewdrop|114055
+    Essence of Pure Sacred Dewdrop|essence_of_pure_sacred_dewdrop|114056
+    Rift Core|rift_core|112089
+    Foreign Synapse|foreign_synapse|112090
+    Alien Life Core|alien_life_core|112091
+    Romaritime Flower|romaritime_flower|101233
+    Fontemer Unihorn|fontemer_unihorn|113053
+    Lumitoile|lumitoile|101237
+    Old Operative's Pocket Watch|old_operatives_pocket_watch|112092
+    Operative's Standard Pocket Watch|operatives_standard_pocket_watch|112093
+    Operative's Constancy|operatives_constancy|112094
+    Subdetection Unit|subdetection_unit|101239
+    "Tourbillon Device"|tourbillon_device|113052
+    Beryl Conch|beryl_conch|101232
+    Lakelight Lily|lakelight_lily|101238
+    Water That Failed To Transcend|water_that_failed_to_transcend|113057
+    Lightless Silk String|lightless_silk_string|113054
+    Lightless Mass|lightless_mass|113056
+    Spring of the First Dewdrop|spring_of_the_first_dewdrop|101240
+    Lightless Eye of the Maelstrom|lightless_eye_of_the_maelstrom|113055
+    Cloudseam Scale|cloudseam_scale|113058
+    Clearwater Jade|clearwater_jade|101241
+    Feathery Fin|feathery_fin|112095
+    Lunar Fin|lunar_fin|112096
+    Chasmlight Fin|chasmlight_fin|112097
+    Fragment of a Golden Melody|fragment_of_a_golden_melody|113059
+    Fading Candle|fading_candle|113060
+    Ruined Hilt|ruined_hilt|112098
+    Splintered Hilt|splintered_hilt|112099
+    Still-Smoldering Hilt|still_smoldering_hilt|112100
+    Trishiraite|trishiraite|101224
+    Silken Feather|silken_feather|113061
+    Sprayfeather Gill|sprayfeather_gill|101247
+    Seasoned Fang|seasoned_fang|112102
+    Tyrant's Fang|tyrants_fang|112103
+    Juvenile Fang|juvenile_fang|112101
+    Mark of the Binding Blessing|mark_of_the_binding_blessing|113064
+    Warrior's Metal Whistle|warriors_metal_whistle|112105
+    Saurian-Crowned Warrior's Golden Whistle|saurian_crowned_warriors_golden_whistle|112106
+    Sentry's Wooden Whistle|sentrys_wooden_whistle|112104
+    Overripe Flamegranate|overripe_flamegranate|113065
+    Quenepa Berry|quenepa_berry|101249
+    Teachings of Contention|teachings_of_contention|104347
+    Guide to Contention|guide_to_contention|104348
+    Philosophies of Contention|philosophies_of_contention|104349
+    Teachings of Conflict|teachings_of_conflict|104353
+    Guide to Conflict|guide_to_conflict|104354
+    Philosophies of Conflict|philosophies_of_conflict|104355
+    Blazing Sacrificial Heart's Terror|blazing_sacrificial_hearts_terror|114061
+    Blazing Sacrificial Heart's Hesitance|blazing_sacrificial_hearts_hesitance|114062
+    Blazing Sacrificial Heart's Resolve|blazing_sacrificial_hearts_resolve|114063
+    Blazing Sacrificial Heart's Splendor|blazing_sacrificial_hearts_splendor|114064
+    Shard of a Shattered Will|shard_of_a_shattered_will|112107
+    Locus of a Clear Will|locus_of_a_clear_will|112108
+    Sigil of a Striding Will|sigil_of_a_striding_will|112109
+    Night-Wind's Mystic Consideration|night_winds_mystic_consideration|114069
+    Night-Wind's Mystic Premonition|night_winds_mystic_premonition|114070
+    Night-Wind's Mystic Augury|night_winds_mystic_augury|114071
+    Night-Wind's Mystic Revelation|night_winds_mystic_revelation|114072
+    Axis of the Secret Source|axis_of_the_secret_source|112113
+    Sheath of the Secret Source|sheath_of_the_secret_source|112114
+    Heart of the Secret Source|heart_of_the_secret_source|112115
+    Ignited Stone|ignited_stone|112110
+    Ignited Seed of Life|ignited_seed_of_life|112111
+    Ignited Seeing Eye|ignited_seeing_eye|112112
+    Delirious Decadence of the Sacred Lord|delirious_decadence_of_the_sacred_lord|114065
+    Delirious Desolation of the Sacred Lord|delirious_desolation_of_the_sacred_lord|114066
+    Delirious Demeanor of the Sacred Lord|delirious_demeanor_of_the_sacred_lord|114067
+    Delirious Divinity of the Sacred Lord|delirious_divinity_of_the_sacred_lord|114068
+    Saurian Claw Succulent|saurian_claw_succulent|101250
+    Denial and Judgment|denial_and_judgment|113062
+    Teachings of Kindling|teachings_of_kindling|104350
+    Guide to Kindling|guide_to_kindling|104351
+    Philosophies of Kindling|philosophies_of_kindling|104352
+    Gold-Inscribed Secret Source Core|gold_inscribed_secret_source_core|113066
+    Brilliant Chrysanthemum|brilliant_chrysanthemum|101248
+    Ensnaring Gaze|ensnaring_gaze|113067
+    Withering Purpurbloom|withering_purpurbloom|101253
+    Glowing Hornshroom|glowing_hornshroom|101252
+    Refractive Bud|refractive_bud|112116
+    Bewildering Broadleaf|bewildering_broadleaf|112117
+    Illusory Leafcoil|illusory_leafcoil|112118
+    Eroded Horn|eroded_horn|113068
+    Talisman of the Enigmatic Land|talisman_of_the_enigmatic_land|113071
+    Eroded Sunfire|eroded_sunfire|113069
+    Dracolite|dracolite|101255
+    Sparkless Statue Core|sparkless_statue_core|113072
+    Skysplit Gembloom|skysplit_gembloom|101254
+    Eroded Scale-Feather|eroded_scale_feather|113070
+    Cold-Cracked Shellshard|cold_cracked_shellshard|112119
+    Warm Back-Shell|warm_back_shell|112120
+    Blazing Prismshell|blazing_prismshell|112121
+    Secret Source Airflow Accumulator|secret_source_airflow_accumulator|113076
+    Ascended Sample: Rook|ascended_sample_rook|113074
+    Ascended Sample: Knight|ascended_sample_knight|113073
+    Tattered Warrant|tattered_warrant|112125
+    Immaculate Warrant|immaculate_warrant|112126
+    Frost-Etched Warrant|frost_etched_warrant|112127
+    Moonfall Silver|moonfall_silver|101263
+    Lightbearing Scale-Feather|lightbearing_scale_feather|113078
+    Teachings of Moonlight|teachings_of_moonlight|104356
+    Guide to Moonlight|guide_to_moonlight|104357
+    Philosophies of Moonlight|philosophies_of_moonlight|104358
+    Lightless Bone|lightless_bone|112131
+    Glowing Remains|glowing_remains|112132
+    Radiant Exoskeleton|radiant_exoskeleton|112133
+    Artful Device Fragment|artful_device_fragment|114073
+    Frostnight's Glimmer|frostnights_glimmer|112128
+    Broken Drive Shaft|broken_drive_shaft|112122
+    Artful Device Replica|artful_device_replica|114074
+    Frostnight's Glow|frostnights_glow|112129
+    Reinforced Drive Shaft|reinforced_drive_shaft|112123
+    Artful Device Inheritance|artful_device_inheritance|114075
+    Frostnight's Glory|frostnights_glory|112130
+    Precision Drive Shaft|precision_drive_shaft|112124
+    Artful Device Wish|artful_device_wish|114076
+    Precision Kuuvahki Stamping Die|precision_kuuvahki_stamping_die|113077
+    Frostlamp Flower|frostlamp_flower|101261
+    Teachings of Elysium|teachings_of_elysium|104359
+    Guide to Elysium|guide_to_elysium|104360
+    Philosophies of Elysium|philosophies_of_elysium|104361
+    Teachings of Vagrancy|teachings_of_vagrancy|104362
+    Guide to Vagrancy|guide_to_vagrancy|104363
+    Philosophies of Vagrancy|philosophies_of_vagrancy|104364
+    Ascended Sample: Queen|ascended_sample_queen|113075
+    Portable Bearing|portable_bearing|101257
+    Ember of Long Night Flint|ember_of_long_night_flint|114077
+    Mistshroud Manifestation|mistshroud_manifestation|112134
+    Afterglow of Long Night Flint|afterglow_of_long_night_flint|114078
+    Mistshroud Plate|mistshroud_plate|112135
+    Flare of Long Night Flint|flare_of_long_night_flint|114079
+    Mistshroud Helmet|mistshroud_helmet|112136
+    Blaze of Long Night Flint|blaze_of_long_night_flint|114080
+    Radiant Antler|radiant_antler|113079
+    Cyclic Military Kuuvahki Core|cyclic_military_kuuvahki_core|113080
+    Winter Icelea|winter_icelea|101268
+    Mask of the Virtuous Doctor|mask_of_the_virtuous_doctor|113081
+    Remnant of the Dreadwing|remnant_of_the_dreadwing|113084
+    Pine Amber|pine_amber|101269
+    Fractured Eye of the Deep Shadow|fractured_eye_of_the_deep_shadow|112137
+    Aberrant Core of the Deep Shadow|aberrant_core_of_the_deep_shadow|112138
+    Hooked Beak of the Deep Shadow|hooked_beak_of_the_deep_shadow|112139
+    Prismatic Severed Tail|prismatic_severed_tail|113085
+    Elixir of the Heretic|elixir_of_the_heretic|113083
+    Etherwing Moth|etherwing_moth|101272
+    Plume of the Fallen Watcher|plume_of_the_fallen_watcher|113086
+    Faded Flaming Hilt|faded_flaming_hilt|112140
+    Fractured Flaming Hilt|fractured_flaming_hilt|112141
+    Jeweled Flaming Hilt|jeweled_flaming_hilt|112142
+    Counterfeit Resin|counterfeit_resin|113087
+    The Cornerstone of Stars and Flames|the_cornerstone_of_stars_and_flames|113063
+    Madman's Restraint|madmans_restraint|113082
+    Sundered Glory of the Far-North Scions|sundered_glory_of_the_far_north_scions|114081
+    Unyielding Delusion of the Far-North Scions|unyielding_delusion_of_the_far_north_scions|114082
+    Oblation of the Far-North Scions|oblation_of_the_far_north_scions|114083
+    Aureate Radiance of the Far-North Scions|aureate_radiance_of_the_far_north_scions|114084
+    Fractured Lunar Iron|fractured_lunar_iron|112143
+    Depleted Lunar Iron|depleted_lunar_iron|112144
+    Unblemished Lunar Iron|unblemished_lunar_iron|112145
+    Flockingweed|flockingweed|101276
+    Symbiotic Chimeric Nucleus|symbiotic_chimeric_nucleus|112150
+    Prime Chimeric Nexus|prime_chimeric_nexus|112151
+    Chimeric Core|chimeric_core|112149
+    Frostfairy Flower|frostfairy_flower|101275
+    Severed Tail of the Sky-Roamer|severed_tail_of_the_sky_roamer|113091
+    Unscorched Blossom Branch|unscorched_blossom_branch|113090
+    Ethereal Crystal|ethereal_crystal|112147
+    Ethereal Crystalscale Stone|ethereal_crystalscale_stone|112148
+    Ethereal Glimmershard|ethereal_glimmershard|112146
+    Twisted Withered Branch|twisted_withered_branch|113088
+    Teachings of Charity|teachings_of_charity|104365
+    Guide to Charity|guide_to_charity|104366
+    Philosophies of Charity|philosophies_of_charity|104367
+    Teachings of Fortitude|teachings_of_fortitude|104368
+    Guide to Fortitude|guide_to_fortitude|104369
+    Philosophies of Fortitude|philosophies_of_fortitude|104370
+    Rise of the Pale Star Army|rise_of_the_pale_star_army|114085
+    Muster of the Pale Star Army|muster_of_the_pale_star_army|114086
+    Clarion of the Pale Star Army|clarion_of_the_pale_star_army|114087
+    Triumph of the Pale Star Army|triumph_of_the_pale_star_army|114088
+    Hollow Root of Life|hollow_root_of_life|112155
+    Sprout Node of Life|sprout_node_of_life|112156
+    Coiled Core of Life|coiled_core_of_life|112157
+    Accreted Fragment|accreted_fragment|112152
+    Accreted Mass|accreted_mass|112153
+    Accreted Growth|accreted_growth|112154
+    The Frost Emperor's Revival|the_frost_emperors_revival|114093
+    The Frost Emperor's Ceremony|the_frost_emperors_ceremony|114094
+    The Frost Emperor's Lament|the_frost_emperors_lament|114095
+    The Frost Emperor's Farewell|the_frost_emperors_farewell|114096
+    Measured Pour of the Cellared Spiritual Nectar|measured_pour_of_the_cellared_spiritual_nectar|114089
+    Intoxication of the Cellared Spiritual Nectar|intoxication_of_the_cellared_spiritual_nectar|114090
+    Exhilaration of the Cellared Spiritual Nectar|exhilaration_of_the_cellared_spiritual_nectar|114091
+    Revelry of the Cellared Spiritual Nectar|revelry_of_the_cellared_spiritual_nectar|114092
+    Teachings of Glory|teachings_of_glory|104371
+    Guide to Glory|guide_to_glory|104372
+    Philosophies of Glory|philosophies_of_glory|104373
+    Profaned Sprout|profaned_sprout|113089
+    Golden Fern|golden_fern|101277
+    Vagabond's Cracked Armor|vagabonds_cracked_armor|113092
+    Kristallfold|kristallfold|101274
+    Shattered Stability Anchor|shattered_stability_anchor|113093
+    Fairy Wormwood|fairy_wormwood|101273
+    Snowborn Heartshard|snowborn_heartshard|112158
+    Snowborn Mirrorheart|snowborn_mirrorheart|112159
+    Snowborn Heart of Ignorance|snowborn_heart_of_ignorance|112160
     """
 }

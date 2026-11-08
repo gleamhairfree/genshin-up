@@ -211,11 +211,20 @@ extension Store {
         let group = character.name
         let theBook = self.book(character.bookID)
         let computed = PlanCalculator.items(for: character, book: theBook, plan: plan)
-        let neededNames = computed.map { $0.name }
         // Names a full plan could produce, used to recognise items from older templates.
         let fullNames = Set(PlanCalculator.items(for: character, book: theBook, plan: .full).map { $0.name })
+        var newData = data
+        newData.goals = Store.rewriteGoals(data.goals, group: group, computed: computed, fullNames: fullNames)
+        newData.plans[group] = plan
+        data = newData
+    }
 
-        var goals = data.goals
+    /// Updates needs for a group from a computed list, adds new items, removes planned items no
+    /// longer needed, and orders the group like the computed list. Have counts and hand-added items stay.
+    static func rewriteGoals(_ input: [MaterialGoal], group: String,
+                             computed: [(name: String, count: Int)], fullNames: Set<String>) -> [MaterialGoal] {
+        let neededNames = computed.map { $0.name }
+        var goals = input
         for (name, need) in computed {
             if let i = goals.firstIndex(where: { $0.group == group && $0.name == name }) {
                 goals[i].need = need
@@ -231,8 +240,6 @@ extension Store {
             g.group == group && !neededNames.contains(g.name)
                 && (g.fromPlan == true || (g.fromPlan == nil && fullNames.contains(g.name)))
         }
-
-        // Keep the group's items in plan order, hand-added items after.
         let firstIndex = goals.firstIndex(where: { $0.group == group }) ?? goals.count
         let groupGoals = goals.filter { $0.group == group }
             .enumerated()
@@ -244,11 +251,7 @@ extension Store {
             .map { $0.element }
         goals.removeAll { $0.group == group }
         goals.insert(contentsOf: groupGoals, at: min(firstIndex, goals.count))
-
-        var newData = data
-        newData.goals = goals
-        newData.plans[group] = plan
-        data = newData
+        return goals
     }
 
     /// Removes the plan and the items it created; hand-added items stay.

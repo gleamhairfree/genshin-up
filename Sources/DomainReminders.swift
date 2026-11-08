@@ -25,6 +25,12 @@ extension Store {
 
     /// Characters still needing talent books (plan not finished, or talents below 10).
     private func needsBooks(_ c: CharacterEntry) -> Bool {
+        // If the Materials tab tracks this character's talent books, they only count while
+        // at least one book item is still short – regardless of the notification toggle.
+        if let b = book(c.bookID) {
+            let bookGoals = data.goals.filter { $0.group == c.name && b.tiers.contains($0.name) }
+            if !bookGoals.isEmpty { return bookGoals.contains { !$0.isDone } }
+        }
         if let p = data.plans[c.name] {
             return p.talentsToMax > 0 && p.targetTalentLevel > p.startTalentLevel
         }
@@ -188,7 +194,7 @@ struct DomainRemindersSection: View {
         } header: {
             Text("Notifications")
         } footer: {
-            Text("Sent at the daily reset, 4:00 AM \(store.data.server.name) (\(localResetTime) your time), listing which of your characters can farm talent books that day. Days with nothing to farm are skipped. \"All tracked\" means characters with a plan, materials, or marked as building.")
+            Text("Sent at the daily reset, 4:00 AM \(store.data.server.name) (\(localResetTime) your time), listing which of your characters can farm talent books that day. Days with nothing to farm are skipped. \"All tracked\" means characters with a plan, materials, or marked as building. Characters whose talent books are all collected on the Materials tab are left out.")
         }
     }
 }

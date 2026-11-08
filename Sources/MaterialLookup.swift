@@ -29,10 +29,23 @@ extension MaterialData {
     static let itemIDs: [String: String] = {
         var result: [String: String] = [:]
         for line in itemsRaw.split(separator: "\n") {
-            let parts = line.trimmingCharacters(in: .whitespaces).split(separator: "|").map(String.init)
-            guard parts.count == 2 else { continue }
+            let parts = line.trimmingCharacters(in: .whitespaces)
+                .split(separator: "|", omittingEmptySubsequences: false).map(String.init)
+            guard parts.count >= 2 else { continue }
             result[normalize(parts[0])] = parts[1]
             result[normalize(parts[1])] = parts[1]
+        }
+        return result
+    }()
+
+    /// paimon.moe item id -> numeric in-game id (for fallback icon hosts)
+    static let numericIDs: [String: String] = {
+        var result: [String: String] = [:]
+        for line in itemsRaw.split(separator: "\n") {
+            let parts = line.trimmingCharacters(in: .whitespaces)
+                .split(separator: "|", omittingEmptySubsequences: false).map(String.init)
+            guard parts.count >= 3, !parts[2].isEmpty else { continue }
+            result[parts[1]] = parts[2]
         }
         return result
     }()
@@ -42,6 +55,20 @@ extension MaterialData {
         // Drop anything in parentheses, e.g. "Mora (thousands)".
         if let r = t.range(of: "(") { t = String(t[..<r.lowerBound]) }
         return t.filter { $0.isLetter || $0.isNumber }
+    }
+
+    /// Icon sources to try in order: paimon.moe, then Enka and Yatta by in-game id.
+    static func iconURLs(forItem name: String) -> [URL] {
+        guard let primary = iconURL(forItem: name) else { return [] }
+        var urls = [primary]
+        let pid = primary.deletingPathExtension().lastPathComponent
+        if let num = numericIDs[pid] {
+            urls.append(contentsOf: [
+                "https://enka.network/ui/UI_ItemIcon_\(num).png",
+                "https://gi.yatta.moe/assets/UI/UI_ItemIcon_\(num).png",
+            ].compactMap { URL(string: $0) })
+        }
+        return urls
     }
 
     static func iconURL(forItem name: String) -> URL? {
@@ -86,8 +113,9 @@ struct ItemIcon: View {
         }
         .frame(width: size, height: size)
         .task(id: name) {
-            guard let url = MaterialData.iconURL(forItem: name) else { image = nil; return }
-            image = await ImageStore.shared.image(for: [url])
+            let urls = MaterialData.iconURLs(forItem: name)
+            guard !urls.isEmpty else { image = nil; return }
+            image = await ImageStore.shared.image(for: urls)
         }
     }
 }
