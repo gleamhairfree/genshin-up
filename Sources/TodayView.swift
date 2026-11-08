@@ -105,6 +105,23 @@ struct TodayView: View {
                     }
                 }
             }
+            NavigationLink {
+                PrimoPredictorView()
+            } label: {
+                let profile = store.data.incomeProfile
+                let patch = PatchCalendar.patch()
+                if profile.quizIsCurrent {
+                    let next = PatchCalendar.upcoming(1)[0]
+                    let projected = PrimoIncome.projectedPulls(at: next.end, savings: w.totalPulls, profile: profile)
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("≈ \(projected) pulls by the end of v\(next.label)").font(.subheadline)
+                        Text("Income ≈ \(Int(PrimoIncome.pullsPerPatch(profile).rounded())) pulls per patch").font(.caption).foregroundColor(.secondary)
+                    }
+                } else {
+                    Label("Take the v\(patch.label) income quiz for pull predictions", systemImage: "questionmark.bubble.fill")
+                        .font(.subheadline).foregroundColor(.orange)
+                }
+            }
         }
     }
 

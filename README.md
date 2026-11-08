@@ -8,6 +8,9 @@ A small SwiftUI iOS app (iOS 16+) that stores everything locally on your phone.
 - **Materials** – "have / need / X more to go" trackers with item icons and +/- buttons, grouped by character (tap a character to collapse/expand, reorder characters from the menu). Double-tap an item's name to mark it collected. **Plan a character** fills in the exact shopping list from their current level to any ascension target (Lv. 20–90) and for 0–3 talents from any starting level to 10 — edit the plan later from the character's menu and the needs update while your 'have' counts are kept: gems, boss drop, local specialty, common drops, books, weekly boss and crowns.
 - **Weapons** – in Roster, switch to Weapons to track any of the 253 weapons (level, refinement, who uses it) and plan its ascension: domain materials, elite drops, common drops, Mystic Enhancement Ore and Mora. Planned weapons show on Materials and on Today when their domain is open.
 - **Domains** – pick any weekday to see every talent-book and weapon-material domain that's open, and which characters use each book.
+- **Farming planner** – turns everything still missing into domain / boss / ley line runs and a day-by-day schedule within your daily resin.
+- **Primogem predictor** – a 5-question quiz (Battle Pass, Welkin, dailies, resin refreshes, events) that returns every new version and projects your pulls for upcoming patches.
+- **Widgets** – home and lock screen widgets with today's domains and your characters.
 - **More** – theme colour & light/dark mode, server selection, wish savings & pity calculator, edit checklist tasks, add custom talent books (for new regions), and JSON backup/restore.
 
 ## Building the .ipa (no Mac needed)

@@ -220,11 +220,12 @@ struct AppData: Codable {
     var weapons: [TrackedWeapon] = []
     var plannerDailyResin: Int = 180
     var plannerLeyLines: Bool = true
+    var incomeProfile = IncomeProfile()
 
     init() {}
 
     enum CodingKeys: String, CodingKey {
-        case server, characters, goals, tasks, customBooks, wish, lastDailyKey, lastWeeklyKey, bookOrder, groupOrder, collapsedGroups, plans, accent, appearance, domainReminders, reminderMode, reminderCharacterIDs, weapons, plannerDailyResin, plannerLeyLines
+        case server, characters, goals, tasks, customBooks, wish, lastDailyKey, lastWeeklyKey, bookOrder, groupOrder, collapsedGroups, plans, accent, appearance, domainReminders, reminderMode, reminderCharacterIDs, weapons, plannerDailyResin, plannerLeyLines, incomeProfile
     }
 
     init(from decoder: Decoder) throws {
@@ -249,6 +250,7 @@ struct AppData: Codable {
         weapons = (try? c.decodeIfPresent([TrackedWeapon].self, forKey: .weapons)) ?? []
         plannerDailyResin = try c.decodeIfPresent(Int.self, forKey: .plannerDailyResin) ?? 180
         plannerLeyLines = try c.decodeIfPresent(Bool.self, forKey: .plannerLeyLines) ?? true
+        incomeProfile = (try? c.decodeIfPresent(IncomeProfile.self, forKey: .incomeProfile)) ?? IncomeProfile()
     }
 
     static let defaultTasks: [TaskItem] = [

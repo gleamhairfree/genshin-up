@@ -54,6 +54,8 @@ struct MoreView: View {
 
                 Section("Tools") {
                     NavigationLink { WishView() } label: { Label("Wish savings & pity", systemImage: "sparkles") }
+                    NavigationLink { PrimoPredictorView() } label: { Label("Primogem income predictor", systemImage: "chart.line.uptrend.xyaxis") }
+                    NavigationLink { FarmingPlannerView() } label: { Label("Farming plan", systemImage: "calendar.badge.clock") }
                     NavigationLink { TaskManagerView() } label: { Label("Edit checklist tasks", systemImage: "list.bullet") }
                     NavigationLink { CustomBooksView() } label: { Label("Custom talent books", systemImage: "book.closed") }
                 }
