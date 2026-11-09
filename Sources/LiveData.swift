@@ -63,6 +63,7 @@ struct LiveData: Codable {
     var banners: [LiveBanner]?
     var patches: [LivePatch]?
     var income: [String: LiveIncome]?
+    var codes: [LiveCode]?
     var notes: String?
 
     var generatedDate: Date? {
@@ -148,6 +149,7 @@ extension Store {
                 Store.mergePresets(into: &copy, presets: GameData.parseCharacters(chars))
                 self.data = copy
             }
+            if let codes = data.codes { self.announceNewCodes(codes) }
         }
     }
 }

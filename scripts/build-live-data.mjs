@@ -200,6 +200,54 @@ for (const w of wiki) {
     featured: w.featured, featuredRare: w.featuredRare, source: 'wiki' });
 }
 
+// ---------- Redemption codes: seria's hoyo-codes API (active list) + wiki (dates, rewards) ----------
+async function fetchCodes() {
+  const codes = new Map();   // UPPERCASE code -> entry
+  try {
+    const res = await fetch('https://hoyo-codes.seria.moe/codes?game=genshin', { headers: { 'User-Agent': UA } });
+    if (res.ok) {
+      for (const c of (await res.json()).codes || []) {
+        if (c.status !== 'OK' || !c.code) continue;
+        codes.set(c.code.toUpperCase(), { code: c.code, rewards: c.rewards || '', added: '', expires: '' });
+      }
+    }
+  } catch (e) { console.log(`hoyo-codes fetch failed: ${e.message}`); }
+  try {
+    const page = await wikiApi({ action: 'parse', page: 'Promotional_Code', prop: 'wikitext' });
+    let text = page.parse?.wikitext || '';
+    const a = text.indexOf('==Active Codes==');
+    if (a >= 0) {
+      text = text.slice(a + 16);
+      const nextHeading = text.search(/\n==[^=]/);
+      if (nextHeading > 0) text = text.slice(0, nextHeading);
+    }
+    text = text.replace(/<!--[\s\S]*?-->/g, '').replace(/\|\s*ref\s*=\s*<ref[\s\S]*?<\/ref>/g, '');
+    const today = new Date().toISOString().slice(0, 10);
+    for (const m of text.matchAll(/\{\{Code Row\s*\|([\s\S]*?)\}\}/g)) {
+      const parts = m[1].split('|').map(x => x.trim());
+      if (parts.some(p => /^notacode\s*=\s*yes/i.test(p))) continue;
+      const pos = parts.filter(p => !/^\w+\s*=/.test(p));
+      const [codeField, server, rewards, added, expires] = pos;
+      if (!codeField || server === 'CN') continue;
+      if (expires && /^\d{4}-\d{2}-\d{2}/.test(expires) && expires.slice(0, 10) < today) continue;
+      for (const code of codeField.split(';').map(x => x.trim()).filter(x => /^[A-Za-z0-9]{6,}$/.test(x))) {
+        const key = code.toUpperCase();
+        const prev = codes.get(key);
+        codes.set(key, { code, rewards: prev?.rewards || rewards || '', added: added || '',
+          expires: /^\d{4}/.test(expires || '') ? expires : '' });
+      }
+    }
+  } catch (e) { console.log(`wiki codes fetch failed: ${e.message}`); }
+  return [...codes.values()].sort((a, b) => (b.added || '').localeCompare(a.added || ''));
+}
+let codes = [];
+if (process.env.FETCH_WIKI === '1') {
+  codes = await fetchCodes();
+  console.log(`Codes: ${codes.map(c => c.code).join(', ')}`);
+} else if (fs.existsSync(outFile)) {
+  codes = JSON.parse(fs.readFileSync(outFile, 'utf8')).codes || [];
+}
+
 // Patches: first banner start per version (UTC+8 times)
 const patches = new Map();
 for (const b of charBanners) {
@@ -231,6 +279,7 @@ const out = {
   patches: [...patches.entries()].map(([version, start]) => ({ version, start }))
     .sort((a, b) => a.start.localeCompare(b.start)).slice(-12),
   income: overrides.income || {},
+  codes,
   notes: overrides.notes || '',
 };
 

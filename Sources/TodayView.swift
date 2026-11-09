@@ -77,6 +77,14 @@ struct TodayView: View {
             if !editMode.isEditing {
                 Section("Character banners") { BannerCard() }
             }
+        case "codes":
+            if !editMode.isEditing {
+                Section {
+                    TodayCodesCard()
+                } header: {
+                    Text("Redemption codes")
+                }
+            }
         case "wish":
             wishSection()
         case "farming":
@@ -321,11 +329,12 @@ struct BookUsage: Identifiable {
 // MARK: - Section arrangement
 
 enum TodaySection {
-    static let defaultOrder = ["banners", "wish", "farming", "domains", "weapons", "daily", "weekly", "once", "addTask"]
+    static let defaultOrder = ["banners", "codes", "wish", "farming", "domains", "weapons", "daily", "weekly", "once", "addTask"]
 
     static func title(_ key: String) -> String {
         switch key {
         case "banners": return "Character banners"
+        case "codes": return "Redemption codes"
         case "wish": return "Wish savings"
         case "farming": return "Today's farming plan"
         case "domains": return "Talent domains today"
@@ -341,6 +350,7 @@ enum TodaySection {
     static func icon(_ key: String) -> String {
         switch key {
         case "banners": return "star.circle.fill"
+        case "codes": return "gift.fill"
         case "wish": return "sparkles"
         case "farming": return "calendar.badge.clock"
         case "domains": return "book.fill"
@@ -358,9 +368,15 @@ extension Store {
     /// Saved order with any new sections appended, hidden ones removed.
     var todaySectionOrder: [String] {
         var order = data.todayOrder.filter { TodaySection.defaultOrder.contains($0) }
-        for key in TodaySection.defaultOrder where !order.contains(key) {
-            // New sections go where they sit in the default order (banners at the very top).
-            if key == "banners" { order.insert(key, at: 0) } else { order.append(key) }
+        for (i, key) in TodaySection.defaultOrder.enumerated() where !order.contains(key) {
+            // New sections slot in right after the section that precedes them by default.
+            if i == 0 {
+                order.insert(key, at: 0)
+            } else if let prev = order.firstIndex(of: TodaySection.defaultOrder[i - 1]) {
+                order.insert(key, at: prev + 1)
+            } else {
+                order.append(key)
+            }
         }
         return order
     }

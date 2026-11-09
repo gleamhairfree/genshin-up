@@ -57,6 +57,7 @@ struct MoreView: View {
                     NavigationLink { WishView() } label: { Label("Wish savings & pity", systemImage: "sparkles") }
                     NavigationLink { PrimoPredictorView() } label: { Label("Primogem income predictor", systemImage: "chart.line.uptrend.xyaxis") }
                     NavigationLink { FarmingPlannerView() } label: { Label("Farming plan", systemImage: "calendar.badge.clock") }
+                    NavigationLink { CodesView() } label: { Label("Redemption codes", systemImage: "gift.fill") }
                     Button {
                         browserPage = BrowserPage(url: ExternalPages.yshelperAbyss)
                     } label: {
