@@ -193,7 +193,7 @@ struct CharacterDetailView: View {
                 }
             }
 
-            if character.kqmQuickGuideURL != nil {
+            if true {
                 Section {
                     if let url = character.kqmQuickGuideURL {
                         Button {
@@ -209,10 +209,15 @@ struct CharacterDetailView: View {
                             Label("KQM Infographic", systemImage: "photo")
                         }
                     }
+                    Button {
+                        browserPage = BrowserPage(url: ExternalPages.yshelperAbyss)
+                    } label: {
+                        Label("Abyss usage stats (YSHelper)", systemImage: "chart.bar.xaxis")
+                    }
                 } header: {
                     Text("Guides")
                 } footer: {
-                    Text("Opens KeqingMains in a popup – tap Done to come back. If a link doesn't load, KQM may not have that guide yet or uses a different name – you can change the guide name below.")
+                    Text("Opens in a popup – tap Done to come back. KQM guides are per character; YSHelper shows current Spiral Abyss usage for everyone. If a link doesn't load, KQM may not have that guide yet or uses a different name – you can change the guide name below.")
                 }
             }
 

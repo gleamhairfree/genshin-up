@@ -5,6 +5,7 @@ struct MoreView: View {
     @EnvironmentObject var store: Store
     @State private var confirmReset = false
     @State private var importMessage: String?
+    @State private var browserPage: BrowserPage?
 
     var body: some View {
         NavigationStack {
@@ -56,6 +57,11 @@ struct MoreView: View {
                     NavigationLink { WishView() } label: { Label("Wish savings & pity", systemImage: "sparkles") }
                     NavigationLink { PrimoPredictorView() } label: { Label("Primogem income predictor", systemImage: "chart.line.uptrend.xyaxis") }
                     NavigationLink { FarmingPlannerView() } label: { Label("Farming plan", systemImage: "calendar.badge.clock") }
+                    Button {
+                        browserPage = BrowserPage(url: ExternalPages.yshelperAbyss)
+                    } label: {
+                        Label("Abyss usage stats (YSHelper)", systemImage: "chart.bar.xaxis")
+                    }
                     NavigationLink { TaskManagerView() } label: { Label("Edit checklist tasks", systemImage: "list.bullet") }
                     NavigationLink { CustomBooksView() } label: { Label("Custom talent books", systemImage: "book.closed") }
                 }
@@ -107,6 +113,7 @@ struct MoreView: View {
                 }
             }
             .navigationTitle("More")
+            .inAppBrowser($browserPage, tint: Theme.accent(store.data.accent))
             .confirmationDialog("Erase everything and start over?", isPresented: $confirmReset, titleVisibility: .visible) {
                 Button("Reset all data", role: .destructive) { store.resetAll() }
             }

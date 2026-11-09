@@ -1,6 +1,10 @@
 import SwiftUI
 import SafariServices
 
+enum ExternalPages {
+    static let yshelperAbyss = URL(string: "https://www.yshelper.com/#/pages/rank/rank")!
+}
+
 /// A URL that can drive `.sheet(item:)`.
 struct BrowserPage: Identifiable {
     let url: URL
