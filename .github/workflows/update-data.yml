@@ -1,0 +1,49 @@
+name: Update game data
+
+# Rebuilds data/live.json from Enka.Network, paimon.moe and genshin-db so the app picks up
+# new characters, banners, materials, weapons and patch dates without a reinstall.
+on:
+  schedule:
+    - cron: '23 */6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Fetch sources
+        run: |
+          set -e
+          mkdir -p /tmp/src && cd /tmp/src
+          git clone -q --depth 1 --filter=blob:none --sparse https://github.com/EnkaNetwork/API-docs enka
+          git -C enka sparse-checkout set store/gi
+          git clone -q --depth 1 --filter=blob:none --sparse https://github.com/MadeBaruna/paimon-moe paimon
+          git -C paimon sparse-checkout set src/data
+          git clone -q --depth 1 --filter=blob:none --sparse https://github.com/theBowja/genshin-db gdb
+          git -C gdb sparse-checkout set src/data/English/materials src/data/English/characters src/data/English/talents
+
+      - name: Build live.json
+        run: |
+          node scripts/build-live-data.mjs /tmp/src/enka/store/gi /tmp/src/paimon/src/data \
+            /tmp/src/gdb/src/data/English data/live.json data/overrides.json
+
+      - name: Commit if changed
+        run: |
+          if git diff --quiet -- data/; then
+            echo "No data changes."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898283+github-actions[bot]@users.noreply.github.com"
+          git add data/
+          git commit -m "Update game data"
+          git push

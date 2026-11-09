@@ -1,0 +1,12 @@
+{
+  "notes": "Hand-maintained values merged into live.json by scripts/build-live-data.mjs. income: per-version free primogems for a player clearing most content, excluding daily commissions (events = events + story + new areas).",
+  "income": {
+    "7.2": {
+      "events": 6530,
+      "endgame": 2400,
+      "exploration": 1000,
+      "fates": 7,
+      "source": "Community estimate for 7.2: ~12,200–12,700 free Primogems + 7 Fates (≈83–86 pulls)."
+    }
+  }
+}

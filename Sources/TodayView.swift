@@ -5,6 +5,7 @@ struct TodayView: View {
     @State private var newTaskTitle = ""
     @State private var newTaskFrequency: TaskFrequency = .daily
     @State private var editMode: EditMode = .inactive
+    @State private var showArrange = false
 
     var body: some View {
         NavigationStack {
@@ -14,11 +15,23 @@ struct TodayView: View {
             .navigationTitle("Today")
             .toolbar {
                 ToolbarItem(placement: .primaryAction) {
-                    Button(editMode.isEditing ? "Done" : "Reorder") {
-                        withAnimation { editMode = editMode.isEditing ? .inactive : .active }
+                    if editMode.isEditing {
+                        Button("Done") { withAnimation { editMode = .inactive } }
+                    } else {
+                        Menu {
+                            Button { showArrange = true } label: {
+                                Label("Arrange sections", systemImage: "rectangle.3.group")
+                            }
+                            Button { withAnimation { editMode = .active } } label: {
+                                Label("Reorder tasks & domains", systemImage: "arrow.up.arrow.down")
+                            }
+                        } label: {
+                            Image(systemName: "arrow.up.arrow.down.circle")
+                        }
                     }
                 }
             }
+            .sheet(isPresented: $showArrange) { ArrangeTodayView() }
             .environment(\.editMode, $editMode)
         }
         .onReceive(Timer.publish(every: 60, on: .main, in: .common).autoconnect()) { _ in
@@ -51,35 +64,55 @@ struct TodayView: View {
                 }
             }
 
-            wishSection()
+            ForEach(store.todaySections, id: \.self) { key in
+                section(for: key, day: day)
+            }
+        }
+    }
 
+    @ViewBuilder
+    private func section(for key: String, day: GameDay) -> some View {
+        switch key {
+        case "banners":
+            if !editMode.isEditing {
+                Section("Character banners") { BannerCard() }
+            }
+        case "wish":
+            wishSection()
+        case "farming":
             if !editMode.isEditing {
                 Section("Today's farming plan") { TodayFarmingCard() }
             }
-
+        case "domains":
             farmSection(day: day)
-
+        case "weapons":
             weaponSection(day: day)
-
+        case "daily":
             taskSection(.daily)
+        case "weekly":
             taskSection(.weekly)
+        case "once":
             taskSection(.once)
+        case "addTask":
+            if !editMode.isEditing { addTaskSection() }
+        default:
+            EmptyView()
+        }
+    }
 
-            if !editMode.isEditing {
-                Section("Add a task") {
-                    TextField("e.g. Buy Stardust shop items", text: $newTaskTitle)
-                    Picker("Repeats", selection: $newTaskFrequency) {
-                        ForEach(TaskFrequency.allCases) { f in Text(f.label).tag(f) }
-                    }
-                    Button("Add task") {
-                        let t = newTaskTitle.trimmingCharacters(in: .whitespaces)
-                        guard !t.isEmpty else { return }
-                        store.data.tasks.append(TaskItem(title: t, frequency: newTaskFrequency))
-                        newTaskTitle = ""
-                    }
-                    .disabled(newTaskTitle.trimmingCharacters(in: .whitespaces).isEmpty)
-                }
+    private func addTaskSection() -> some View {
+        Section("Add a task") {
+            TextField("e.g. Buy Stardust shop items", text: $newTaskTitle)
+            Picker("Repeats", selection: $newTaskFrequency) {
+                ForEach(TaskFrequency.allCases) { f in Text(f.label).tag(f) }
             }
+            Button("Add task") {
+                let t = newTaskTitle.trimmingCharacters(in: .whitespaces)
+                guard !t.isEmpty else { return }
+                store.data.tasks.append(TaskItem(title: t, frequency: newTaskFrequency))
+                newTaskTitle = ""
+            }
+            .disabled(newTaskTitle.trimmingCharacters(in: .whitespaces).isEmpty)
         }
     }
 
@@ -115,7 +148,7 @@ struct TodayView: View {
                     let projected = PrimoIncome.projectedPulls(at: next.end, savings: w.totalPulls, profile: profile)
                     VStack(alignment: .leading, spacing: 2) {
                         Text("≈ \(projected) pulls by the end of v\(next.label)").font(.subheadline)
-                        Text("Income ≈ \(Int(PrimoIncome.pullsPerPatch(profile).rounded())) pulls per patch").font(.caption).foregroundColor(.secondary)
+                        Text("Income ≈ \(Int(PrimoIncome.pullsPerPatch(profile, version: patch.label).rounded())) pulls this patch").font(.caption).foregroundColor(.secondary)
                     }
                 } else {
                     Label("Take the v\(patch.label) income quiz for pull predictions", systemImage: "questionmark.bubble.fill")
@@ -282,4 +315,109 @@ struct BookUsage: Identifiable {
     let book: TalentBook
     let characters: [CharacterEntry]
     var id: String { book.id }
+}
+
+
+// MARK: - Section arrangement
+
+enum TodaySection {
+    static let defaultOrder = ["banners", "wish", "farming", "domains", "weapons", "daily", "weekly", "once", "addTask"]
+
+    static func title(_ key: String) -> String {
+        switch key {
+        case "banners": return "Character banners"
+        case "wish": return "Wish savings"
+        case "farming": return "Today's farming plan"
+        case "domains": return "Talent domains today"
+        case "weapons": return "Weapon materials today"
+        case "daily": return "Daily tasks"
+        case "weekly": return "Weekly tasks"
+        case "once": return "One-off / event tasks"
+        case "addTask": return "Add a task"
+        default: return key
+        }
+    }
+
+    static func icon(_ key: String) -> String {
+        switch key {
+        case "banners": return "star.circle.fill"
+        case "wish": return "sparkles"
+        case "farming": return "calendar.badge.clock"
+        case "domains": return "book.fill"
+        case "weapons": return "shield.lefthalf.filled"
+        case "daily": return "sun.max.fill"
+        case "weekly": return "calendar"
+        case "once": return "flag.fill"
+        case "addTask": return "plus.circle.fill"
+        default: return "square"
+        }
+    }
+}
+
+extension Store {
+    /// Saved order with any new sections appended, hidden ones removed.
+    var todaySectionOrder: [String] {
+        var order = data.todayOrder.filter { TodaySection.defaultOrder.contains($0) }
+        for key in TodaySection.defaultOrder where !order.contains(key) {
+            // New sections go where they sit in the default order (banners at the very top).
+            if key == "banners" { order.insert(key, at: 0) } else { order.append(key) }
+        }
+        return order
+    }
+
+    var todaySections: [String] { todaySectionOrder.filter { !data.todayHidden.contains($0) } }
+}
+
+struct ArrangeTodayView: View {
+    @EnvironmentObject var store: Store
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        NavigationStack {
+            List {
+                Section {
+                    ForEach(store.todaySectionOrder, id: \.self) { key in
+                        let hidden = store.data.todayHidden.contains(key)
+                        HStack(spacing: 12) {
+                            Image(systemName: TodaySection.icon(key))
+                                .foregroundColor(hidden ? .secondary : .accentColor)
+                                .frame(width: 26)
+                            Text(TodaySection.title(key)).foregroundColor(hidden ? .secondary : .primary)
+                            Spacer()
+                            Button {
+                                if hidden {
+                                    store.data.todayHidden.removeAll { $0 == key }
+                                } else {
+                                    store.data.todayHidden.append(key)
+                                }
+                            } label: {
+                                Image(systemName: hidden ? "eye.slash" : "eye")
+                                    .foregroundColor(hidden ? .secondary : .accentColor)
+                            }
+                            .buttonStyle(.borderless)
+                        }
+                    }
+                    .onMove { from, to in
+                        var order = store.todaySectionOrder
+                        order.move(fromOffsets: from, toOffset: to)
+                        store.data.todayOrder = order
+                    }
+                } footer: {
+                    Text("Drag the handles to change the order of the Today tab. Tap the eye to hide a section.")
+                }
+                Section {
+                    Button("Reset to default order") {
+                        store.data.todayOrder = TodaySection.defaultOrder
+                        store.data.todayHidden = []
+                    }
+                }
+            }
+            .environment(\.editMode, .constant(.active))
+            .navigationTitle("Arrange Today")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .confirmationAction) { Button("Done") { dismiss() } }
+            }
+        }
+    }
 }

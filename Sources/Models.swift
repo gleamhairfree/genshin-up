@@ -221,11 +221,13 @@ struct AppData: Codable {
     var plannerDailyResin: Int = 180
     var plannerLeyLines: Bool = true
     var incomeProfile = IncomeProfile()
+    var todayOrder: [String] = []
+    var todayHidden: [String] = []
 
     init() {}
 
     enum CodingKeys: String, CodingKey {
-        case server, characters, goals, tasks, customBooks, wish, lastDailyKey, lastWeeklyKey, bookOrder, groupOrder, collapsedGroups, plans, accent, appearance, domainReminders, reminderMode, reminderCharacterIDs, weapons, plannerDailyResin, plannerLeyLines, incomeProfile
+        case server, characters, goals, tasks, customBooks, wish, lastDailyKey, lastWeeklyKey, bookOrder, groupOrder, collapsedGroups, plans, accent, appearance, domainReminders, reminderMode, reminderCharacterIDs, weapons, plannerDailyResin, plannerLeyLines, incomeProfile, todayOrder, todayHidden
     }
 
     init(from decoder: Decoder) throws {
@@ -251,6 +253,8 @@ struct AppData: Codable {
         plannerDailyResin = try c.decodeIfPresent(Int.self, forKey: .plannerDailyResin) ?? 180
         plannerLeyLines = try c.decodeIfPresent(Bool.self, forKey: .plannerLeyLines) ?? true
         incomeProfile = (try? c.decodeIfPresent(IncomeProfile.self, forKey: .incomeProfile)) ?? IncomeProfile()
+        todayOrder = try c.decodeIfPresent([String].self, forKey: .todayOrder) ?? []
+        todayHidden = try c.decodeIfPresent([String].self, forKey: .todayHidden) ?? []
     }
 
     static let defaultTasks: [TaskItem] = [
@@ -275,6 +279,8 @@ final class Store: ObservableObject {
     @Published var data: AppData {
         didSet { save() }
     }
+    @Published var downloadedLive: LiveData? = nil
+    @Published var liveStatus: String? = nil
 
     private static var fileURL: URL {
         let dir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
@@ -308,8 +314,7 @@ final class Store: ObservableObject {
     }()
 
     /// Adds any new preset characters that a newer app version ships with, without touching user edits.
-    static func mergePresets(into data: inout AppData) {
-        let presets = GameData.presetCharacters
+    static func mergePresets(into data: inout AppData, presets: [CharacterEntry] = GameData.presetCharacters) {
         let byID = Dictionary(presets.map { ($0.id, $0) }, uniquingKeysWith: { a, _ in a })
         // Refresh game facts on characters the user already has, keeping their progress.
         for i in data.characters.indices {

@@ -105,6 +105,8 @@ struct MoreView: View {
 
                 UpdatesSection()
 
+                GameDataSection()
+
                 WidgetStatusSection()
 
                 Section("About") {

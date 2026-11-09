@@ -34,6 +34,9 @@ https://github.com/gleamhairfree/genshin-up/releases/latest/download/source.json
 
 Every push to `main` builds a new version (1.0.N) and updates the source, so Feather shows it as an update. The app's **More → Updates** section can also check for new versions.
 
+## Live game data
+`data/live.json` is rebuilt every 6 hours by the **Update game data** workflow from Enka.Network, paimon.moe and genshin-db (characters, talent books, materials, items, weapons, banners, patch dates). The app downloads it, so new characters, banners and versions appear without reinstalling. Per-version primogem estimates live in `data/overrides.json`.
+
 ## Notes
 - Material data and item icons come from paimon.moe's public data. Character data comes from Enka.Network's public game data; icons load from enka.network the first time and are cached on the phone.
 - The IPA is unsigned (ad-hoc), as Feather expects.

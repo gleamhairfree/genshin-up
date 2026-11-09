@@ -19,6 +19,7 @@ struct GenshinTrackerApp: App {
                         store.refreshResets()
                         store.rescheduleDomainReminders()
                         store.updateWidget()
+                        Task { await store.refreshLiveData() }
                     }
                 }
         }

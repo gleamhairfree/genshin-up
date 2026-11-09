@@ -2,28 +2,40 @@ import SwiftUI
 
 // MARK: - Patch calendar
 
-/// Versions last 42 days. Anchored on 7.2 (Nov 4 2026, 06:00 UTC+8).
+/// Versions last 42 days. Anchored on the latest started version from live game data
+/// (fallback: 7.2 on Nov 4 2026, 06:00 UTC+8).
 enum PatchCalendar {
-    static let anchorStart = Date(timeIntervalSince1970: 1_793_743_200)   // 2026-11-03 22:00 UTC
-    static let anchorMajor = 7
-    static let anchorMinor = 2
     static let length: TimeInterval = 42 * 86_400
 
+    private struct Anchor { let major: Int; let minor: Int; let start: Date }
+
+    private static let anchor: Anchor = {
+        let fallback = Anchor(major: 7, minor: 2, start: Date(timeIntervalSince1970: 1_793_743_200))
+        guard let patches = LiveCatalog.cached?.patches else { return fallback }
+        let now = Date()
+        let started = patches.compactMap { p -> Anchor? in
+            let parts = p.version.split(separator: ".").compactMap { Int($0) }
+            guard parts.count == 2, let d = p.startDate, d <= now else { return nil }
+            return Anchor(major: parts[0], minor: parts[1], start: d)
+        }.max { $0.start < $1.start }
+        return started ?? fallback
+    }()
+
     struct Patch: Hashable {
-        let index: Int          // 0 = anchor
+        let index: Int          // 0 = anchor version
         let start: Date
         var end: Date { start.addingTimeInterval(PatchCalendar.length) }
-        var label: String { "\(PatchCalendar.anchorMajor).\(PatchCalendar.anchorMinor + index)" }
+        var label: String { "\(PatchCalendar.anchor.major).\(PatchCalendar.anchor.minor + index)" }
     }
 
     static func patch(at date: Date = Date()) -> Patch {
-        let i = Int(floor(date.timeIntervalSince(anchorStart) / length))
-        return Patch(index: i, start: anchorStart.addingTimeInterval(Double(i) * length))
+        let i = Int(floor(date.timeIntervalSince(anchor.start) / length))
+        return Patch(index: i, start: anchor.start.addingTimeInterval(Double(i) * length))
     }
 
     static func upcoming(_ count: Int, from date: Date = Date()) -> [Patch] {
         let current = patch(at: date)
-        return (1...count).map { Patch(index: current.index + $0, start: anchorStart.addingTimeInterval(Double(current.index + $0) * length)) }
+        return (1...count).map { Patch(index: current.index + $0, start: anchor.start.addingTimeInterval(Double(current.index + $0) * length)) }
     }
 }
 
@@ -69,16 +81,24 @@ enum PrimoIncome {
     /// Primogem cost of refreshing resin N times every day (50, 100, 100).
     static let refreshCostPerDay = [0, 50, 150, 250]
 
-    /// Estimated income for one 42-day patch. Free content figures are averages of recent patches.
-    static func perPatch(_ p: IncomeProfile) -> [Line] {
+    /// Live per-version estimate (from the game data file), if one exists for that version.
+    static func override(for version: String) -> LiveIncome? { LiveCatalog.cached?.income?[version] }
+
+    /// Estimated income for one 42-day patch. Free content figures come from the version's
+    /// community estimate when available, otherwise averages of recent patches.
+    static func perPatch(_ p: IncomeProfile, version: String? = nil) -> [Line] {
         var lines: [Line] = []
+        let o = version.flatMap { override(for: $0) }
         let dailyShare = [0.25, 0.75, 1.0][min(max(p.dailies, 0), 2)]
         lines.append(Line(name: "Daily commissions", primos: Int(2_520 * dailyShare), fates: 0))
         let c = min(max(p.content, 0), 2)
-        lines.append(Line(name: "Events & story quests", primos: [700, 1_900, 3_000][c], fates: 0))
-        lines.append(Line(name: "Abyss, Theater & Stygian", primos: [300, 1_300, 2_400][c], fates: 0))
-        lines.append(Line(name: "Exploration, codes & compensation", primos: [400, 700, 1_000][c], fates: 0))
-        lines.append(Line(name: "Stardust shop (Intertwined Fates)", primos: 0, fates: 7))
+        let events = Double(o?.events ?? 3_000) * [0.23, 0.63, 1.0][c]
+        let endgame = Double(o?.endgame ?? 2_400) * [0.125, 0.54, 1.0][c]
+        let exploration = Double(o?.exploration ?? 1_000) * [0.4, 0.7, 1.0][c]
+        lines.append(Line(name: o == nil ? "Events & story quests" : "Events, story & new areas", primos: Int(events), fates: 0))
+        lines.append(Line(name: "Abyss, Theater & Stygian", primos: Int(endgame), fates: 0))
+        lines.append(Line(name: "Exploration, codes & compensation", primos: Int(exploration), fates: 0))
+        lines.append(Line(name: "Stardust shop & quest fates", primos: 0, fates: o?.fates ?? 7))
         if p.welkin { lines.append(Line(name: "Blessing of the Welkin Moon", primos: 3_780, fates: 0)) }
         if p.battlePass { lines.append(Line(name: "Gnostic Hymn (paid Battle Pass)", primos: 680, fates: 4)) }
         let refresh = refreshCostPerDay[min(max(p.refreshes, 0), 3)] * 42
@@ -86,27 +106,44 @@ enum PrimoIncome {
         return lines
     }
 
-    static func pullsPerPatch(_ p: IncomeProfile) -> Double {
-        let lines = perPatch(p)
+    static func pullsPerPatch(_ p: IncomeProfile, version: String? = nil) -> Double {
+        let lines = perPatch(p, version: version)
         let primos = lines.reduce(0) { $0 + $1.primos }
         let fates = lines.reduce(0) { $0 + $1.fates }
         return Double(primos) / 160 + Double(fates)
     }
 
-    static func pullsPerDay(_ p: IncomeProfile) -> Double { pullsPerPatch(p) / 42 }
-
-    /// Projected total pulls at a date, starting from current savings.
-    static func projectedPulls(at date: Date, savings: Int, profile: IncomeProfile, now: Date = Date()) -> Int {
-        let days = max(0, date.timeIntervalSince(now) / 86_400)
-        return savings + Int(days * pullsPerDay(profile))
+    static func pullsPerDay(_ p: IncomeProfile, at date: Date = Date()) -> Double {
+        pullsPerPatch(p, version: PatchCalendar.patch(at: date).label) / 42
     }
 
-    /// Date when savings reach `target` pulls, or nil if income doesn't get there.
+    /// Projected total pulls at a date, adding each day's income for the version that day falls in.
+    static func projectedPulls(at date: Date, savings: Int, profile: IncomeProfile, now: Date = Date()) -> Int {
+        var total = Double(savings)
+        var day = now
+        while day < date {
+            let step = min(86_400, date.timeIntervalSince(day))
+            total += pullsPerDay(profile, at: day) * step / 86_400
+            day = day.addingTimeInterval(step)
+        }
+        return Int(total)
+    }
+
+    /// Date when savings reach `target` pulls, or nil if income doesn't get there within ~2 years.
     static func dateReaching(_ target: Int, savings: Int, profile: IncomeProfile, now: Date = Date()) -> Date? {
         if savings >= target { return now }
-        let rate = pullsPerDay(profile)
-        guard rate > 0.01 else { return nil }
-        return now.addingTimeInterval(Double(target - savings) / rate * 86_400)
+        var total = Double(savings)
+        var day = now
+        for _ in 0..<730 {
+            let rate = pullsPerDay(profile, at: day)
+            if rate <= 0.001 { return nil }
+            if total + rate >= Double(target) {
+                return day.addingTimeInterval((Double(target) - total) / rate * 86_400)
+            }
+            total += rate
+            day = day.addingTimeInterval(86_400)
+        }
+        return nil
     }
 }
 
@@ -227,10 +264,11 @@ struct PrimoPredictorView: View {
 
     var body: some View {
         let profile = store.data.incomeProfile
-        let lines = PrimoIncome.perPatch(profile)
+        let currentLabel = PatchCalendar.patch().label
+        let lines = PrimoIncome.perPatch(profile, version: currentLabel)
         let primos = lines.reduce(0) { $0 + $1.primos }
         let fates = lines.reduce(0) { $0 + $1.fates }
-        let pulls = PrimoIncome.pullsPerPatch(profile)
+        let pulls = PrimoIncome.pullsPerPatch(profile, version: currentLabel)
         let savings = store.data.wish.totalPulls
         let current = PatchCalendar.patch()
         let w = store.data.wish
@@ -249,7 +287,7 @@ struct PrimoPredictorView: View {
                 }
             }
 
-            Section("Estimated income per patch") {
+            Section {
                 HStack(alignment: .firstTextBaseline) {
                     Text("≈ \(Int(pulls.rounded()))").font(.largeTitle.weight(.bold).monospacedDigit())
                     Text("pulls").foregroundColor(.secondary)
@@ -258,6 +296,9 @@ struct PrimoPredictorView: View {
                         Text("\(primos.formatted()) primos").font(.subheadline.monospacedDigit())
                         Text("+ \(fates) Intertwined Fates").font(.caption).foregroundColor(.secondary)
                     }
+                }
+                if let source = PrimoIncome.override(for: currentLabel)?.source {
+                    Text(source).font(.caption).foregroundColor(.secondary)
                 }
                 ForEach(lines) { l in
                     HStack {
@@ -273,6 +314,8 @@ struct PrimoPredictorView: View {
                         }
                     }
                 }
+            } header: {
+                Text("Estimated income – v\(currentLabel)")
             }
 
             Section {

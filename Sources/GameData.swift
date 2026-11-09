@@ -92,7 +92,21 @@ enum GameData {
     static let elements = ["Pyro", "Hydro", "Anemo", "Electro", "Dendro", "Cryo", "Geo"]
     static let weapons = ["Sword", "Claymore", "Polearm", "Bow", "Catalyst"]
 
-    static let books: [TalentBook] = [
+    /// Built-in books merged with any new ones from downloaded game data (new regions).
+    static let books: [TalentBook] = {
+        guard let raw = LiveCatalog.raw(\.booksRaw) else { return builtInBooks }
+        var result = builtInBooks
+        for line in raw.split(separator: "\n") {
+            let p = line.split(separator: "|", omittingEmptySubsequences: false).map(String.init)
+            guard p.count >= 5, !result.contains(where: { $0.id == p[0] }),
+                  let g = Int(p[3]), let group = DayGroup(rawValue: g) else { continue }
+            result.append(TalentBook(id: p[0], name: p[1], region: p[2], group: group,
+                                     domain: p[4].isEmpty ? "Domain of Mastery" : p[4]))
+        }
+        return result
+    }()
+
+    static let builtInBooks: [TalentBook] = [
         TalentBook(id: "freedom", name: "Freedom", region: "Mondstadt", group: .monThu, domain: "Forsaken Rift"),
         TalentBook(id: "resistance", name: "Resistance", region: "Mondstadt", group: .tueFri, domain: "Forsaken Rift"),
         TalentBook(id: "ballad", name: "Ballad", region: "Mondstadt", group: .wedSat, domain: "Forsaken Rift"),
@@ -275,7 +289,11 @@ enum GameData {
     """
 
     static var presetCharacters: [CharacterEntry] {
-        presetCharacterData
+        parseCharacters(LiveCatalog.raw(\.charactersRaw) ?? presetCharacterData)
+    }
+
+    static func parseCharacters(_ raw: String) -> [CharacterEntry] {
+        raw
             .split(separator: "\n")
             .compactMap { line -> CharacterEntry? in
                 let parts = line.trimmingCharacters(in: .whitespaces)

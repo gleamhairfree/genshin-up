@@ -24,7 +24,7 @@ struct WeaponInfo: Identifiable, Hashable {
 
 enum WeaponCatalog {
     static let all: [WeaponInfo] = {
-        WeaponData.weaponsRaw.split(separator: "\n").compactMap { line -> WeaponInfo? in
+        (LiveCatalog.raw(\.weaponsRaw) ?? WeaponData.weaponsRaw).split(separator: "\n").compactMap { line -> WeaponInfo? in
             let parts = line.trimmingCharacters(in: .whitespaces)
                 .split(separator: "|", omittingEmptySubsequences: false).map(String.init)
             guard parts.count >= 5 else { return nil }
@@ -49,7 +49,7 @@ enum WeaponCatalog {
 
     static let domainDays: [String: DayGroup] = {
         var result: [String: DayGroup] = [:]
-        for line in WeaponData.domainItemDaysRaw.split(separator: "\n") {
+        for line in (LiveCatalog.raw(\.weaponDomainDaysRaw) ?? WeaponData.domainItemDaysRaw).split(separator: "\n") {
             let parts = line.trimmingCharacters(in: .whitespaces).split(separator: "|").map(String.init)
             if parts.count == 2, let v = Int(parts[1]), let g = DayGroup(rawValue: v) { result[parts[0]] = g }
         }
@@ -143,7 +143,8 @@ enum WeaponCalculator {
         }
 
         if info.rarity >= 3 {
-            let table = WeaponData.expTables[min(info.rarity, 5) - 3]
+            let tables = (LiveCatalog.cached?.weaponExp?.count == 3 ? LiveCatalog.cached?.weaponExp : nil) ?? WeaponData.expTables
+            let table = tables[min(info.rarity, 5) - 3]
             if target - 1 < table.count && current - 1 < table.count {
                 let exp = table[target - 1] - table[current - 1]
                 if plan.includeExtras && exp > 0 {

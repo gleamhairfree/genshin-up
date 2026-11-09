@@ -9,7 +9,7 @@ struct CharacterMaterials {
 extension MaterialData {
     static let byCharacter: [String: CharacterMaterials] = {
         var result: [String: CharacterMaterials] = [:]
-        for line in characterMaterialsRaw.split(separator: "\n") {
+        for line in (LiveCatalog.raw(\.materialsRaw) ?? characterMaterialsRaw).split(separator: "\n") {
             let parts = line.trimmingCharacters(in: .whitespaces)
                 .split(separator: "|", omittingEmptySubsequences: false)
                 .map(String.init)
@@ -28,7 +28,7 @@ extension MaterialData {
     /// normalized display name -> paimon.moe item id
     static let itemIDs: [String: String] = {
         var result: [String: String] = [:]
-        for line in itemsRaw.split(separator: "\n") {
+        for line in liveItems.split(separator: "\n") {
             let parts = line.trimmingCharacters(in: .whitespaces)
                 .split(separator: "|", omittingEmptySubsequences: false).map(String.init)
             guard parts.count >= 2 else { continue }
@@ -41,7 +41,7 @@ extension MaterialData {
     /// paimon.moe item id -> numeric in-game id (for fallback icon hosts)
     static let numericIDs: [String: String] = {
         var result: [String: String] = [:]
-        for line in itemsRaw.split(separator: "\n") {
+        for line in liveItems.split(separator: "\n") {
             let parts = line.trimmingCharacters(in: .whitespaces)
                 .split(separator: "|", omittingEmptySubsequences: false).map(String.init)
             guard parts.count >= 3, !parts[2].isEmpty else { continue }
@@ -49,6 +49,8 @@ extension MaterialData {
         }
         return result
     }()
+
+    static var liveItems: String { LiveCatalog.raw(\.itemsRaw) ?? itemsRaw }
 
     static func normalize(_ s: String) -> String {
         var t = s.lowercased()
