@@ -85,7 +85,10 @@ struct LiveData: Codable {
 /// The copy saved on the phone is read once at launch; static tables use it, falling back to
 /// the data built into the app.
 enum LiveCatalog {
-    static let remoteURL = URL(string: "https://raw.githubusercontent.com/\(AppInfo.repo)/main/data/live.json")!
+    static let remoteURLs: [URL] = [
+        "https://raw.githubusercontent.com/\(AppInfo.repo)/main/data/live.json",
+        "https://cdn.jsdelivr.net/gh/\(AppInfo.repo)@main/data/live.json",
+    ].compactMap { URL(string: $0) }
 
     static var fileURL: URL {
         FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("live-data.json")
@@ -114,17 +117,26 @@ extension Store {
         let key = "liveDataLastCheck"
         let last = UserDefaults.standard.double(forKey: key)
         if !force && Date().timeIntervalSince1970 - last < 3 * 3600 { return }
-        var req = URLRequest(url: LiveCatalog.remoteURL)
-        req.cachePolicy = .reloadIgnoringLocalCacheData
-        req.timeoutInterval = 30
-        let fetched = try? await URLSession.shared.data(for: req)
-        guard let raw = fetched?.0,
-              (fetched?.1 as? HTTPURLResponse)?.statusCode == 200,
-              let data = try? JSONDecoder().decode(LiveData.self, from: raw),
-              data.looksValid else {
+        var found: (Data, LiveData)?
+        for url in LiveCatalog.remoteURLs {
+            var req = URLRequest(url: url)
+            req.cachePolicy = .reloadIgnoringLocalCacheData
+            req.timeoutInterval = 30
+            let fetched = try? await URLSession.shared.data(for: req)
+            if let raw = fetched?.0,
+               (fetched?.1 as? HTTPURLResponse)?.statusCode == 200,
+               let decoded = try? JSONDecoder().decode(LiveData.self, from: raw),
+               decoded.looksValid {
+                found = (raw, decoded)
+                break
+            }
+        }
+        guard let pair = found else {
             await MainActor.run { self.liveStatus = "Couldn't download game data – using the saved copy." }
             return
         }
+        let raw = pair.0
+        let data = pair.1
         try? raw.write(to: LiveCatalog.fileURL, options: .atomic)
         UserDefaults.standard.set(Date().timeIntervalSince1970, forKey: key)
         await MainActor.run {
