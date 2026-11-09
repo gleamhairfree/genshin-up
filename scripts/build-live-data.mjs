@@ -109,6 +109,18 @@ for (const c of Object.values(pmChars)) {
 const items = Object.values(itemList).filter(i => i.id && i.name && !['unknown', 'none'].includes(i.id))
   .map(i => `${i.name}|${i.id}|${matByName.get(i.name.toLowerCase())?.id ?? ''}`);
 
+// Extra icons for things paimon.moe doesn't list (foods, currencies, gadgets): normalizedname|UI icon file
+const norm = (s) => s.toLowerCase().replace(/[^a-z0-9]/g, '');
+const paimonNames = new Set(Object.values(itemList).map(i => norm(i.name || '')));
+const extraIcons = [];
+for (const f of ['foods.json', 'materials.json']) {
+  const p = path.join(gdbDir, '..', 'image', f);
+  if (!fs.existsSync(p)) continue;
+  for (const [key, v] of Object.entries(JSON.parse(fs.readFileSync(p, 'utf8')))) {
+    if (v?.filename_icon && !paimonNames.has(key)) extraIcons.push(`${key}|${v.filename_icon}`);
+  }
+}
+
 // Weapons
 const weapons = [];
 const domainDays = new Map();
@@ -272,6 +284,7 @@ const out = {
     .map(([id, b]) => `${id}|${b.name}|${b.region || 'Other'}|${b.group}|${b.domain}`).join('\n'),
   materialsRaw: materials.sort().join('\n'),
   itemsRaw: items.join('\n'),
+  extraIconsRaw: [...new Set(extraIcons)].sort().join('\n'),
   weaponsRaw: weapons.sort().join('\n'),
   weaponDomainDaysRaw: [...domainDays.entries()].sort().map(([k, v]) => `${k}|${v}`).join('\n'),
   weaponExp,

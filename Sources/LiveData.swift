@@ -57,6 +57,7 @@ struct LiveData: Codable {
     var booksRaw: String?
     var materialsRaw: String?
     var itemsRaw: String?
+    var extraIconsRaw: String?
     var weaponsRaw: String?
     var weaponDomainDaysRaw: String?
     var weaponExp: [[Int]]?
