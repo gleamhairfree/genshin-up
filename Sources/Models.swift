@@ -223,11 +223,12 @@ struct AppData: Codable {
     var incomeProfile = IncomeProfile()
     var todayOrder: [String] = []
     var todayHidden: [String] = []
+    var uid: String = ""
 
     init() {}
 
     enum CodingKeys: String, CodingKey {
-        case server, characters, goals, tasks, customBooks, wish, lastDailyKey, lastWeeklyKey, bookOrder, groupOrder, collapsedGroups, plans, accent, appearance, domainReminders, reminderMode, reminderCharacterIDs, weapons, plannerDailyResin, plannerLeyLines, incomeProfile, todayOrder, todayHidden
+        case server, characters, goals, tasks, customBooks, wish, lastDailyKey, lastWeeklyKey, bookOrder, groupOrder, collapsedGroups, plans, accent, appearance, domainReminders, reminderMode, reminderCharacterIDs, weapons, plannerDailyResin, plannerLeyLines, incomeProfile, todayOrder, todayHidden, uid
     }
 
     init(from decoder: Decoder) throws {
@@ -255,6 +256,7 @@ struct AppData: Codable {
         incomeProfile = (try? c.decodeIfPresent(IncomeProfile.self, forKey: .incomeProfile)) ?? IncomeProfile()
         todayOrder = try c.decodeIfPresent([String].self, forKey: .todayOrder) ?? []
         todayHidden = try c.decodeIfPresent([String].self, forKey: .todayHidden) ?? []
+        uid = try c.decodeIfPresent(String.self, forKey: .uid) ?? ""
     }
 
     static let defaultTasks: [TaskItem] = [

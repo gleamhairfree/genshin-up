@@ -62,6 +62,21 @@ struct MoreView: View {
                     } label: {
                         Label("Abyss usage stats (YSHelper)", systemImage: "chart.bar.xaxis")
                     }
+                    HStack {
+                        Label("Game UID", systemImage: "person.text.rectangle")
+                        Spacer()
+                        TextField("e.g. 612345678", text: $store.data.uid)
+                            .keyboardType(.numberPad)
+                            .multilineTextAlignment(.trailing)
+                            .font(.body.monospacedDigit())
+                            .frame(width: 140)
+                    }
+                    Button {
+                        if let url = ExternalPages.akasha(uid: store.data.uid) { browserPage = BrowserPage(url: url) }
+                    } label: {
+                        Label("My Akasha.cv profile", systemImage: "person.crop.circle.badge.checkmark")
+                    }
+                    .disabled(ExternalPages.akasha(uid: store.data.uid) == nil)
                     NavigationLink { TaskManagerView() } label: { Label("Edit checklist tasks", systemImage: "list.bullet") }
                     NavigationLink { CustomBooksView() } label: { Label("Custom talent books", systemImage: "book.closed") }
                 }
@@ -116,6 +131,7 @@ struct MoreView: View {
             }
             .navigationTitle("More")
             .inAppBrowser($browserPage, tint: Theme.accent(store.data.accent))
+            .keyboardDoneButton()
             .confirmationDialog("Erase everything and start over?", isPresented: $confirmReset, titleVisibility: .visible) {
                 Button("Reset all data", role: .destructive) { store.resetAll() }
             }

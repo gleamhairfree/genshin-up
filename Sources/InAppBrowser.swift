@@ -3,6 +3,12 @@ import SafariServices
 
 enum ExternalPages {
     static let yshelperAbyss = URL(string: "https://www.yshelper.com/#/pages/rank/rank")!
+
+    static func akasha(uid: String) -> URL? {
+        let digits = uid.filter { $0.isNumber }
+        guard digits.count >= 9 else { return nil }
+        return URL(string: "https://akasha.cv/profile/\(digits)")
+    }
 }
 
 /// A URL that can drive `.sheet(item:)`.
