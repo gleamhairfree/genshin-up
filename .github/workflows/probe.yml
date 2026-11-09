@@ -1,0 +1,15 @@
+name: Probe sources (temporary)
+on: workflow_dispatch
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Probe
+        run: |
+          UA="TeyvatTracker-data-bot/1.0 (github.com/gleamhairfree/genshin-up)"
+          echo "=== search ==="
+          curl -s -A "$UA" "https://genshin-impact.fandom.com/api.php?action=query&list=search&srsearch=Zibai+Linnea+wish+7.2&srlimit=10&format=json" | head -c 2500; echo
+          echo "=== Version/7.2 wikitext ==="
+          curl -s -A "$UA" "https://genshin-impact.fandom.com/api.php?action=parse&page=Version/7.2&prop=wikitext&format=json&formatversion=2" | python3 -c "import json,sys;d=json.load(sys.stdin);t=d.get('parse',{}).get('wikitext','');print(len(t));i=t.find('Wish');print(t[max(0,i-1500):i+3000])" || true
+          echo "=== Wish/2026 ==="
+          curl -s -A "$UA" "https://genshin-impact.fandom.com/api.php?action=parse&page=Wish/2026&prop=wikitext&format=json&formatversion=2" | python3 -c "import json,sys;d=json.load(sys.stdin);t=d.get('parse',{}).get('wikitext','');print(len(t));print(t[-3500:])" || true
