@@ -48,7 +48,7 @@ struct BannerCard: View {
                             if let v = b.version { Text("v\(v)").font(.caption2).foregroundColor(.secondary) }
                             if let end = b.endDate(server) {
                                 Text("Ends in").font(.caption2).foregroundColor(.secondary)
-                                Text(formatDuration(end.timeIntervalSince(now)))
+                                Text(bannerCountdown(end.timeIntervalSince(now)))
                                     .font(.subheadline.monospacedDigit().weight(.semibold))
                             }
                             Image(systemName: expanded.contains(b.id) ? "chevron.up" : "chevron.down")
@@ -109,4 +109,14 @@ struct BannerCard: View {
         }
         .padding(.vertical, 2)
     }
+}
+
+/// "15 days 4 hours" for 48+ hours left, then "47h 12m".
+func bannerCountdown(_ seconds: TimeInterval) -> String {
+    let s = max(0, Int(seconds))
+    guard s >= 48 * 3600 else { return formatDuration(seconds) }
+    let days = s / 86_400
+    let hours = (s % 86_400) / 3600
+    let d = "\(days) day\(days == 1 ? "" : "s")"
+    return hours == 0 ? d : "\(d) \(hours) hour\(hours == 1 ? "" : "s")"
 }
