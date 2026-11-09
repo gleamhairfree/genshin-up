@@ -5,6 +5,8 @@ on:
     branches: [main]
     paths-ignore:
       - 'data/**'
+      - 'scripts/build-live-data.mjs'
+      - '.github/workflows/update-data.yml'
       - 'README.md'
   workflow_dispatch:
 

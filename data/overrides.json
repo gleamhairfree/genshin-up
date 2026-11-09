@@ -1,12 +1,25 @@
 {
-  "notes": "Hand-maintained values merged into live.json by scripts/build-live-data.mjs. income: per-version free primogems for a player clearing most content, excluding daily commissions (events = events + story + new areas).",
+  "notes": "Hand-maintained values merged into live.json by scripts/build-live-data.mjs. income: per-version free primogems for a player clearing most content, excluding daily commissions. banners: only needed if neither paimon.moe nor the Genshin wiki has an announced banner yet (times UTC+8).",
   "income": {
     "7.2": {
       "events": 6530,
       "endgame": 2400,
       "exploration": 1000,
       "fates": 7,
-      "source": "Community estimate for 7.2: ~12,200–12,700 free Primogems + 7 Fates (≈83–86 pulls)."
+      "source": "Community estimate for 7.2: ~12,200\u201312,700 free Primogems + 7 Fates (\u224883\u201386 pulls)."
     }
-  }
+  },
+  "banners": [
+    {
+      "name": "Harmonious Abundance / Ya-hoho! Compendium",
+      "version": "7.2",
+      "start": "2026-11-24 18:00:00",
+      "end": "2026-12-15 14:59:59",
+      "featured": [
+        "Zibai",
+        "Linnea"
+      ],
+      "featuredRare": []
+    }
+  ]
 }

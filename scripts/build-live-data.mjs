@@ -131,7 +131,74 @@ const charBanners = banners.characters
                featured: (b.featured || []).map(id => idToName[id] || id),
                featuredRare: (b.featuredRare || []).map(id => idToName[id] || id) }))
   .filter(b => b.featured.length > 0 && b.featured.length <= 3);   // skip chronicled / multi-pick banners
-const recent = charBanners.filter(b => Date.parse(b.end.replace(' ', 'T') + 'Z') > now - 60 * 86400e3);
+let recent = charBanners.filter(b => Date.parse(b.end.replace(' ', 'T') + 'Z') > now - 60 * 86400e3);
+
+// ---------- Genshin Fandom wiki: upcoming banners appear here as soon as they're announced ----------
+const UA = 'TeyvatTracker-data-bot/1.0 (+https://github.com/gleamhairfree/genshin-up)';
+async function wikiApi(params) {
+  const url = 'https://genshin-impact.fandom.com/api.php?' + new URLSearchParams({ format: 'json', formatversion: '2', ...params });
+  const res = await fetch(url, { headers: { 'User-Agent': UA } });
+  if (!res.ok) throw new Error(`wiki ${res.status}`);
+  return res.json();
+}
+async function wikiBanners() {
+  const list = await wikiApi({ action: 'query', list: 'categorymembers', cmtitle: 'Category:Character_Event_Wishes',
+    cmsort: 'timestamp', cmdir: 'desc', cmlimit: '30' });
+  const titles = (list.query?.categorymembers || []).map(m => m.title).filter(t => /\/\d{4}-\d{2}-\d{2}$/.test(t));
+  if (!titles.length) return [];
+  const pages = await wikiApi({ action: 'query', prop: 'revisions', rvprop: 'content', rvslots: 'main', titles: titles.join('|') });
+  const field = (text, key) => {
+    const m = new RegExp(`\\|\\s*${key}\\s*=([^\\n]*)`).exec(text);
+    return m ? m[1].replace(/<!--|-->/g, '').trim() : '';
+  };
+  const out = [];
+  for (const p of pages.query?.pages || []) {
+    const text = p.revisions?.[0]?.slots?.main?.content || '';
+    if (!/\|\s*type\s*=\s*Character Event/.test(text)) continue;
+    const start = field(text, 'time_start').slice(0, 19);
+    const end = field(text, 'time_end').slice(0, 19);
+    const five = field(text, 'character_5_F').split(';').map(x => x.trim()).filter(Boolean);
+    const four = field(text, 'character_4_F').split(';').map(x => x.trim()).filter(x => x && !/^Unknown/i.test(x));
+    if (!/^\d{4}-\d{2}-\d{2}/.test(start) || !five.length) continue;
+    out.push({ name: p.title.replace(/\/\d{4}-\d{2}-\d{2}$/, ''), start: start.length === 10 ? start + ' 00:00:00' : start,
+      end: /^\d{4}-\d{2}-\d{2}/.test(end) ? (end.length === 10 ? end + ' 23:59:59' : end) : '',
+      featured: five, featuredRare: four });
+  }
+  // Combine banners that run together (e.g. the two 5★ banners of a phase), like paimon.moe does.
+  const byStart = new Map();
+  for (const b of out) {
+    const key = b.start.slice(0, 10);
+    const g = byStart.get(key);
+    if (!g) { byStart.set(key, { ...b }); continue; }
+    for (const f of b.featured) if (!g.featured.includes(f)) g.featured.push(f);
+    if (!g.featuredRare.length) g.featuredRare = b.featuredRare;
+    if (!g.end) g.end = b.end;
+  }
+  return [...byStart.values()];
+}
+
+let wiki = [];
+if (process.env.FETCH_WIKI === '1') {
+  try { wiki = await wikiBanners(); console.log(`Wiki banners: ${wiki.map(b => b.featured.join('+') + ' @' + b.start).join(', ')}`); }
+  catch (e) { console.log(`Wiki fetch failed (${e.message}); continuing with paimon.moe only.`); }
+}
+const sameDay = (a, b) => Math.abs(Date.parse(a.replace(' ', 'T') + 'Z') - Date.parse(b.replace(' ', 'T') + 'Z')) < 36 * 3600e3;
+const patchFor = (start) => {
+  const vs = charBanners.filter(b => b.version && b.start <= start).sort((a, b) => a.start.localeCompare(b.start));
+  return vs.length ? vs[vs.length - 1].version : '';
+};
+for (const w of wiki) {
+  const existing = recent.find(b => sameDay(b.start, w.start));
+  if (existing) {
+    if (!(existing.featuredRare || []).length && w.featuredRare.length) existing.featuredRare = w.featuredRare;
+    continue;
+  }
+  if (w.end && Date.parse(w.end.replace(' ', 'T') + 'Z') < now - 60 * 86400e3) continue;
+  // Missing end date: phases last about three weeks.
+  const end = w.end || new Date(Date.parse(w.start.replace(' ', 'T') + 'Z') + 21 * 86400e3 - 3 * 3600e3).toISOString().slice(0, 19).replace('T', ' ');
+  recent.push({ name: w.name, version: patchFor(w.start), start: w.start, end, timezoneDependent: false,
+    featured: w.featured, featuredRare: w.featuredRare, source: 'wiki' });
+}
 
 // Patches: first banner start per version (UTC+8 times)
 const patches = new Map();
@@ -141,6 +208,13 @@ for (const b of charBanners) {
 }
 
 const overrides = overridesFile && fs.existsSync(overridesFile) ? JSON.parse(fs.readFileSync(overridesFile, 'utf8')) : {};
+// Hand-entered banners (for anything both sources miss); ignored once a source has that phase.
+for (const b of overrides.banners || []) {
+  if (!b.start || !b.featured?.length || recent.some(r => sameDay(r.start, b.start))) continue;
+  recent.push({ name: b.name || b.featured.join(' & '), version: b.version || patchFor(b.start), start: b.start,
+    end: b.end || '', timezoneDependent: !!b.timezoneDependent, featured: b.featured, featuredRare: b.featuredRare || [], source: 'manual' });
+}
+recent.sort((a, b) => a.start.localeCompare(b.start));
 
 const out = {
   schema: 1,

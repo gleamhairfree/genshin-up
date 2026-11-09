@@ -4,7 +4,7 @@ name: Update game data
 # new characters, banners, materials, weapons and patch dates without a reinstall.
 on:
   schedule:
-    - cron: '23 */6 * * *'
+    - cron: '23 */3 * * *'
   workflow_dispatch:
 
 permissions:
@@ -32,6 +32,8 @@ jobs:
           git -C gdb sparse-checkout set src/data/English/materials src/data/English/characters src/data/English/talents
 
       - name: Build live.json
+        env:
+          FETCH_WIKI: '1'
         run: |
           node scripts/build-live-data.mjs /tmp/src/enka/store/gi /tmp/src/paimon/src/data \
             /tmp/src/gdb/src/data/English data/live.json data/overrides.json
