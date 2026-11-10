@@ -121,6 +121,38 @@ for (const f of ['foods.json', 'materials.json']) {
   }
 }
 
+// Where to get items: domain entrance/region/days (domains + materials) and enemy drops (enemies).
+const gdbDomains = readDir('domains');
+const gdbEnemies = readDir('enemies');
+const stripTier = (n) => n.replace(/\s+[IVX]+$/, '');
+const domainInfo = new Map();
+for (const d of gdbDomains) {
+  const key = stripTier(d.name || '');
+  if (key && !domainInfo.has(key)) domainInfo.set(key, { entrance: d.entranceName || '', region: d.regionName || '' });
+}
+const generic = new Set(['Mora', 'Adventure EXP', 'Companionship EXP']);
+const droppedBy = new Map();
+for (const e of gdbEnemies) {
+  const boss = /BOSS/i.test(e.enemyType || '');
+  for (const r of e.rewardPreview || []) {
+    if (!r?.name || generic.has(r.name)) continue;
+    if (!droppedBy.has(r.name)) droppedBy.set(r.name, []);
+    droppedBy.get(r.name).push({ name: e.name, boss });
+  }
+}
+const itemSources = [];
+for (const m of gdbMaterials) {
+  const d = m.dropDomainName ? domainInfo.get(stripTier(m.dropDomainName)) : null;
+  const enemies = (droppedBy.get(m.name) || [])
+    .sort((a, b) => (b.boss - a.boss) || a.name.localeCompare(b.name))
+    .filter((x, i, arr) => arr.findIndex(y => y.name === x.name) === i)
+    .slice(0, 8).map(x => (x.boss ? '★' : '') + x.name);
+  if (!d && !enemies.length && !/Local Specialty/.test(m.typeText || '')) continue;
+  const days = (m.daysOfWeek || []).map(x => x.slice(0, 3)).join(',');
+  itemSources.push([m.name, d?.entrance || (m.dropDomainName || '').replace(/^Domain of \w+:\s*/, ''), d?.region || '',
+    days, m.typeText || '', enemies.join(';')].join('|'));
+}
+
 // Weapons
 const weapons = [];
 const domainDays = new Map();
@@ -285,6 +317,7 @@ const out = {
   materialsRaw: materials.sort().join('\n'),
   itemsRaw: items.join('\n'),
   extraIconsRaw: [...new Set(extraIcons)].sort().join('\n'),
+  itemSourcesRaw: itemSources.sort().join('\n'),
   weaponsRaw: weapons.sort().join('\n'),
   weaponDomainDaysRaw: [...domainDays.entries()].sort().map(([k, v]) => `${k}|${v}`).join('\n'),
   weaponExp,

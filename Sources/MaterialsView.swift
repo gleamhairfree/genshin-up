@@ -307,6 +307,7 @@ struct GoalEditor: View {
                     }
                     TextField("Group (e.g. character name)", text: $goal.group)
                 }
+                ItemSourceSection(itemName: goal.name)
                 Section("Count") {
                     IntField(title: "Have", value: $goal.have, range: 0...999_999_999)
                     IntField(title: "Need", value: $goal.need, range: 0...999_999_999)
