@@ -63,6 +63,11 @@ struct MoreView: View {
                     } label: {
                         Label("Abyss usage stats (YSHelper)", systemImage: "chart.bar.xaxis")
                     }
+                    Button {
+                        browserPage = BrowserPage(url: ExternalPages.stygian)
+                    } label: {
+                        Label("Stygian Onslaught (stygian.moe)", systemImage: "flame")
+                    }
                     HStack {
                         Label("Game UID", systemImage: "person.text.rectangle")
                         Spacer()

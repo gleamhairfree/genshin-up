@@ -3,6 +3,7 @@ import SafariServices
 
 enum ExternalPages {
     static let yshelperAbyss = URL(string: "https://www.yshelper.com/#/pages/rank/rank")!
+    static let stygian = URL(string: "https://stygian.moe")!
 
     static func akasha(uid: String) -> URL? {
         let digits = uid.filter { $0.isNumber }

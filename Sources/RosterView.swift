@@ -214,10 +214,15 @@ struct CharacterDetailView: View {
                     } label: {
                         Label("Abyss usage stats (YSHelper)", systemImage: "chart.bar.xaxis")
                     }
+                    Button {
+                        browserPage = BrowserPage(url: ExternalPages.stygian)
+                    } label: {
+                        Label("Stygian Onslaught (stygian.moe)", systemImage: "flame")
+                    }
                 } header: {
                     Text("Guides")
                 } footer: {
-                    Text("Opens in a popup – tap Done to come back. KQM guides are per character; YSHelper shows current Spiral Abyss usage for everyone. If a link doesn't load, KQM may not have that guide yet or uses a different name – you can change the guide name below.")
+                    Text("Opens in a popup – tap Done to come back. KQM guides are per character; YSHelper shows current Spiral Abyss usage and stygian.moe covers Stygian Onslaught, for everyone. If a link doesn't load, KQM may not have that guide yet or uses a different name – you can change the guide name below.")
                 }
             }
 
